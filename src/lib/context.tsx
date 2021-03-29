@@ -10,9 +10,14 @@ export interface IVerse {
 function useProviderValue() {
   const [verses, setVerses] = React.useState<IVerse[]>([]);
 
+  const updateVerses = (newVerses: IVerse[], sliderIndex: number) => {
+    const oldArray = verses.slice(0, sliderIndex + 1);
+    setVerses([...oldArray, ...newVerses]);
+  };
+
   return {
     verses,
-    setVerses,
+    updateVerses,
   };
 }
 

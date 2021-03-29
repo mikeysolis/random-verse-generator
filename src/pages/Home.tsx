@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useLazyQuery } from '@apollo/client';
 import {
   IonContent,
@@ -7,27 +7,38 @@ import {
   IonTitle,
   IonToolbar,
   IonSpinner,
+  IonSlides,
+  IonSlide,
 } from '@ionic/react';
 
 import './Home.css';
-// import { IVerse } from '../lib/context';
 import { GET_RANDOM_VERSES } from '../lib/queries';
 import { useContext } from '../lib/context';
-import ScriptureSlides from '../components/ScriptureSlides';
 import VolumeSegment from '../components/VolumeSegment';
 
 const Home: React.FC = () => {
-  const { verses, setVerses } = useContext();
+  const { verses, updateVerses } = useContext();
   const [volumeId, setVolumeId] = useState<string | undefined>('');
-  // const [verses, setVerses] = useState<IVerse[]>([]);
+  const [sliderIndex, setSliderIndex] = useState<number>(0);
+  const [isFirstFetch, setIsFirstFetch] = useState(true);
+  const [toConcat, setToConcat] = useState(false);
+  const sliderRef = useRef<HTMLIonSlidesElement | null>(null);
 
   const [fetchVerses, { loading }] = useLazyQuery(GET_RANDOM_VERSES, {
     variables: {
-      limit: 1,
+      limit: 5,
       volumeId,
     },
     onCompleted: async data => {
-      setVerses([...verses, ...data.get_random_verses]);
+      updateVerses(data.get_random_verses, sliderIndex);
+
+      if (isFirstFetch) {
+        sliderRef.current?.slideTo(sliderIndex, 0);
+      } else {
+        sliderRef.current?.slideTo(sliderIndex + 1, 0);
+      }
+
+      setIsFirstFetch(false);
     },
     onError: error => {
       console.log('error', error);
@@ -40,6 +51,55 @@ const Home: React.FC = () => {
     fetchVerses();
   };
 
+  const updateSliderCurrentIndex = async () => {
+    const sliderCurrentIndex = await sliderRef.current?.getActiveIndex();
+    if (sliderCurrentIndex !== undefined) {
+      setSliderIndex(sliderCurrentIndex);
+    }
+  };
+
+  if (!volumeId) {
+    return (
+      <HomeLayout>
+        <VolumeSegment changeHandler={onIonSegmentChangeHandler} />
+        <div className="container">
+          <p>Please select a volume of scripture.</p>
+        </div>
+      </HomeLayout>
+    );
+  }
+
+  if (loading) {
+    return (
+      <HomeLayout>
+        <VolumeSegment changeHandler={onIonSegmentChangeHandler} />
+        <div className="container">
+          <IonSpinner />
+        </div>
+      </HomeLayout>
+    );
+  }
+
+  return (
+    <HomeLayout>
+      <VolumeSegment changeHandler={onIonSegmentChangeHandler} />
+      <div className="container">
+        <IonSlides
+          ref={sliderRef}
+          onIonSlideDidChange={updateSliderCurrentIndex}
+        >
+          {verses.map(verse => (
+            <IonSlide key={verse.verseTitle}>
+              <p>Verse Title: {verse.verseTitle}</p>
+            </IonSlide>
+          ))}
+        </IonSlides>
+      </div>
+    </HomeLayout>
+  );
+};
+
+const HomeLayout: React.FC = ({ children }) => {
   return (
     <IonPage>
       <IonHeader>
@@ -53,14 +113,7 @@ const Home: React.FC = () => {
             <IonTitle size="large">Scripture Generator</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <VolumeSegment changeHandler={onIonSegmentChangeHandler} />
-        <div className="container">
-          {loading ? (
-            <IonSpinner />
-          ) : (
-            <ScriptureSlides volumeId={volumeId} verses={verses} />
-          )}
-        </div>
+        {children}
       </IonContent>
     </IonPage>
   );
