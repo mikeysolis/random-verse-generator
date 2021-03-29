@@ -4,6 +4,7 @@ import { IonReactRouter } from '@ionic/react-router';
 import { ApolloProvider } from '@apollo/client';
 
 import createApolloClient from './lib/apolloClient';
+import { ContextProvider } from './lib/context';
 import Home from './pages/Home';
 
 /* Core CSS required for Ionic components to work properly */
@@ -29,18 +30,20 @@ const App: React.FC = () => {
   const client = createApolloClient();
   return (
     <ApolloProvider client={client}>
-      <IonApp>
-        <IonReactRouter>
-          <IonRouterOutlet>
-            <Route exact path="/home">
-              <Home />
-            </Route>
-            <Route exact path="/">
-              <Redirect to="/home" />
-            </Route>
-          </IonRouterOutlet>
-        </IonReactRouter>
-      </IonApp>
+      <ContextProvider>
+        <IonApp>
+          <IonReactRouter>
+            <IonRouterOutlet>
+              <Route exact path="/home">
+                <Home />
+              </Route>
+              <Route exact path="/">
+                <Redirect to="/home" />
+              </Route>
+            </IonRouterOutlet>
+          </IonReactRouter>
+        </IonApp>
+      </ContextProvider>
     </ApolloProvider>
   );
 };

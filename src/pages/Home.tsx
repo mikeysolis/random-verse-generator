@@ -10,20 +10,16 @@ import {
 } from '@ionic/react';
 
 import './Home.css';
+// import { IVerse } from '../lib/context';
 import { GET_RANDOM_VERSES } from '../lib/queries';
+import { useContext } from '../lib/context';
 import ScriptureSlides from '../components/ScriptureSlides';
 import VolumeSegment from '../components/VolumeSegment';
 
-export interface IVerse {
-  volumeTitle: string;
-  verseTitle: string;
-  scriptureText: string;
-  verseId: number;
-}
-
 const Home: React.FC = () => {
+  const { verses, setVerses } = useContext();
   const [volumeId, setVolumeId] = useState<string | undefined>('');
-  const [verses, setVerses] = useState<IVerse[]>([]);
+  // const [verses, setVerses] = useState<IVerse[]>([]);
 
   const [fetchVerses, { loading }] = useLazyQuery(GET_RANDOM_VERSES, {
     variables: {

@@ -1,6 +1,6 @@
 import { IonSlide, IonSlides } from '@ionic/react';
 
-import { IVerse } from '../pages/Home';
+import { IVerse } from '../lib/context';
 
 interface ScriptureSlidesProps {
   volumeId: string | undefined;
