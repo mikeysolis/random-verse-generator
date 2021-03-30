@@ -8,6 +8,7 @@ import createApolloClient from './lib/apolloClient';
 import { createStorage, get } from './lib/ionicStorage';
 import { useContext } from './lib/context';
 import Home from './pages/Home';
+import Onboarding from './pages/Onboarding';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -27,6 +28,7 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import './Global.css';
 
 const App: React.FC = () => {
   const client = createApolloClient();
@@ -42,17 +44,20 @@ const App: React.FC = () => {
       }
     };
     setupStorage();
-    console.log('completed: ', tutorialCompleted);
-  }, [tutorialCompleted, setTutorialCompleted]);
+  }, [setTutorialCompleted]);
 
   return (
     <ApolloProvider client={client}>
       <IonApp>
         <IonReactRouter>
           <IonRouterOutlet>
-            <Route exact path="/home">
-              <Home />
-            </Route>
+            <Route
+              exact
+              path="/home"
+              render={() => {
+                return tutorialCompleted ? <Home /> : <Onboarding />;
+              }}
+            />
             <Route exact path="/">
               <Redirect to="/home" />
             </Route>
