@@ -21,7 +21,6 @@ const Home: React.FC = () => {
   const [volumeId, setVolumeId] = useState<string | undefined>('');
   const [sliderIndex, setSliderIndex] = useState<number>(0);
   const [isFirstFetch, setIsFirstFetch] = useState(true);
-  const [toConcat, setToConcat] = useState(false);
   const sliderRef = useRef<HTMLIonSlidesElement | null>(null);
 
   const [fetchVerses, { loading }] = useLazyQuery(GET_RANDOM_VERSES, {
@@ -51,11 +50,14 @@ const Home: React.FC = () => {
     fetchVerses();
   };
 
-  const updateSliderCurrentIndex = async () => {
+  const onIonSlideDidChangeHandler = async () => {
     const sliderCurrentIndex = await sliderRef.current?.getActiveIndex();
-    if (sliderCurrentIndex !== undefined) {
-      setSliderIndex(sliderCurrentIndex);
-    }
+
+    if (sliderCurrentIndex !== undefined) setSliderIndex(sliderCurrentIndex);
+  };
+
+  const onIonSlideReachEndHandler = () => {
+    fetchVerses();
   };
 
   if (!volumeId) {
@@ -86,13 +88,17 @@ const Home: React.FC = () => {
       <div className="container">
         <IonSlides
           ref={sliderRef}
-          onIonSlideDidChange={updateSliderCurrentIndex}
+          onIonSlideDidChange={onIonSlideDidChangeHandler}
+          onIonSlideReachEnd={onIonSlideReachEndHandler}
         >
           {verses.map(verse => (
             <IonSlide key={verse.verseTitle}>
-              <p>Verse Title: {verse.verseTitle}</p>
+              <p>{verse.verseTitle}</p>
             </IonSlide>
           ))}
+          <IonSlide key={'empty verse'}>
+            <IonSpinner />
+          </IonSlide>
         </IonSlides>
       </div>
     </HomeLayout>
