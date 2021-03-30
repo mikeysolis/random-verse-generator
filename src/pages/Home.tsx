@@ -9,15 +9,17 @@ import {
   IonSpinner,
   IonSlides,
   IonSlide,
+  IonButton,
 } from '@ionic/react';
 
 import './Home.css';
 import { GET_RANDOM_VERSES } from '../lib/queries';
 import { useContext } from '../lib/context';
+import { set } from '../lib/ionicStorage';
 import VolumeSegment from '../components/VolumeSegment';
 
 const Home: React.FC = () => {
-  const { verses, updateVerses } = useContext();
+  const { verses, updateVerses, setTutorialCompleted } = useContext();
   const [volumeId, setVolumeId] = useState<string | undefined>('');
   const [sliderIndex, setSliderIndex] = useState<number>(0);
   const [isFirstFetch, setIsFirstFetch] = useState(true);
@@ -60,12 +62,18 @@ const Home: React.FC = () => {
     fetchVerses();
   };
 
+  const onClickHandler = () => {
+    setTutorialCompleted(true);
+    set('tutorialCompleted', true);
+  };
+
   if (!volumeId) {
     return (
       <HomeLayout>
         <VolumeSegment changeHandler={onIonSegmentChangeHandler} />
         <div className="container">
           <p>Please select a volume of scripture.</p>
+          <IonButton onClick={onClickHandler}>My Button</IonButton>
         </div>
       </HomeLayout>
     );
