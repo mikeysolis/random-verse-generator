@@ -58,7 +58,7 @@ const App: React.FC = () => {
                 return tutorialCompleted ? (
                   <Home />
                 ) : (
-                  <Onboarding getStartedHandler={setTutorialCompleted} />
+                  <Onboarding completedTutorialHandler={setTutorialCompleted} />
                 );
               }}
             />
