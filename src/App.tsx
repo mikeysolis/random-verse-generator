@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import { IonApp, IonRouterOutlet } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
@@ -32,7 +32,7 @@ import './Global.css';
 
 const App: React.FC = () => {
   const client = createApolloClient();
-  const { tutorialCompleted, setTutorialCompleted } = useContext();
+  const [tutorialCompleted, setTutorialCompleted] = useState<boolean>(false);
 
   useEffect(() => {
     const setupStorage = async () => {
@@ -44,7 +44,7 @@ const App: React.FC = () => {
       }
     };
     setupStorage();
-  }, [setTutorialCompleted]);
+  }, []);
 
   return (
     <ApolloProvider client={client}>
@@ -55,12 +55,14 @@ const App: React.FC = () => {
               exact
               path="/home"
               render={() => {
-                return tutorialCompleted ? <Home /> : <Onboarding />;
+                return tutorialCompleted ? (
+                  <Home />
+                ) : (
+                  <Onboarding getStartedHandler={setTutorialCompleted} />
+                );
               }}
             />
-            <Route exact path="/">
-              <Redirect to="/home" />
-            </Route>
+            <Redirect exact from="/" to="/home" />
           </IonRouterOutlet>
         </IonReactRouter>
       </IonApp>

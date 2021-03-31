@@ -47,7 +47,6 @@ const Home: React.FC = () => {
 
   const onIonSegmentChangeHandler = (e: any) => {
     setVolumeId(e.detail.value);
-    fetchVerses();
   };
 
   const onIonSlideDidChangeHandler = async () => {

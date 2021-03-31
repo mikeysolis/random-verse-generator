@@ -9,9 +9,6 @@ export interface IVerse {
 
 function useProviderValue() {
   const [verses, setVerses] = React.useState<IVerse[]>([]);
-  const [tutorialCompleted, setTutorialCompleted] = React.useState<boolean>(
-    false
-  );
 
   const updateVerses = (newVerses: IVerse[], sliderIndex: number) => {
     const oldArray = verses.slice(0, sliderIndex + 1);
@@ -21,8 +18,6 @@ function useProviderValue() {
   return {
     verses,
     updateVerses,
-    tutorialCompleted,
-    setTutorialCompleted,
   };
 }
 

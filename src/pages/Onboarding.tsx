@@ -8,11 +8,15 @@ import {
 } from '@ionic/react';
 
 import './Onboarding.css';
-import { useContext } from '../lib/context';
 import { set } from '../lib/ionicStorage';
 
-const Onboarding: React.FC = () => {
-  const { setTutorialCompleted } = useContext();
+interface OnboardingProps {
+  completedTutorialHandler: (e: boolean) => void;
+}
+
+const Onboarding: React.FC<OnboardingProps> = ({
+  completedTutorialHandler,
+}) => {
   const sliderRef = useRef<HTMLIonSlidesElement | null>(null);
 
   const next = () => {
@@ -20,7 +24,7 @@ const Onboarding: React.FC = () => {
   };
 
   const skip = () => {
-    setTutorialCompleted(true);
+    completedTutorialHandler(true);
     set('tutorialCompleted', true);
   };
 
