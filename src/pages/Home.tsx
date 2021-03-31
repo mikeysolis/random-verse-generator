@@ -92,7 +92,12 @@ const Home: React.FC = () => {
         >
           {verses.map(verse => (
             <IonSlide key={verse.verseTitle}>
-              <p>{verse.verseTitle}</p>
+              <figure className="verse">
+                <blockquote>{verse.scriptureText}</blockquote>
+                <figcaption className="verse-title">
+                  {verse.verseTitle}
+                </figcaption>
+              </figure>
             </IonSlide>
           ))}
           <IonSlide key={'empty verse'}>
@@ -112,14 +117,7 @@ const HomeLayout: React.FC = ({ children }) => {
           <IonTitle>Scripture Generator</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Scripture Generator</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        {children}
-      </IonContent>
+      <IonContent>{children}</IonContent>
     </IonPage>
   );
 };

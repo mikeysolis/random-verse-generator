@@ -28,7 +28,7 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
-import './Global.css';
+import './theme/Global.css';
 
 const App: React.FC = () => {
   const client = createApolloClient();
