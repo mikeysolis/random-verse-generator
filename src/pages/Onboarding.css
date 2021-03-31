@@ -38,9 +38,9 @@ ion-slide img {
   padding-top: 20%;
 }
 
-.slider-text h2 {
-  font-family: 'Quicksand', sans-serif;
-}
+/* .slider-text h2 {
+  font-family: 'Merriweather', serif;
+} */
 
 .navigator {
   display: flex;

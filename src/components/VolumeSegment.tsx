@@ -1,5 +1,7 @@
 import { IonSegment, IonSegmentButton, IonLabel } from '@ionic/react';
 
+import './VolumeSegment.css';
+
 interface VolumeSegmentProps {
   changeHandler: (e: any) => void;
 }
@@ -10,7 +12,11 @@ const VolumeSegment: React.FC<VolumeSegmentProps> = ({ changeHandler }) => {
   };
 
   return (
-    <IonSegment color="warning" onIonChange={onIonChangeHandler}>
+    <IonSegment
+      onIonChange={onIonChangeHandler}
+      scrollable={true}
+      swipeGesture={false}
+    >
       <IonSegmentButton value="1">
         <IonLabel>OT</IonLabel>
       </IonSegmentButton>

@@ -112,7 +112,7 @@ const Home: React.FC = () => {
 const HomeLayout: React.FC = ({ children }) => {
   return (
     <IonPage>
-      <IonHeader>
+      <IonHeader className="ion-no-border">
         <IonToolbar>
           <IonTitle>Scripture Generator</IonTitle>
         </IonToolbar>

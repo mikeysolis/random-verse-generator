@@ -1,3 +1,7 @@
+ion-toolbar {
+  --border-width: 0;
+}
+
 .container {
   text-align: center;
   position: absolute;
@@ -11,15 +15,16 @@
   margin: 0 16px 0 16px;
   text-align: justify;
   line-height: 2rem;
-  font-size: 1.3rem;
-  font-weight: 300;
+  font-size: 1.2rem;
 }
 
 .verse blockquote {
   margin: 0;
+  font-weight: 400;
 }
 
 .verse-title {
   margin: 18px 0 0 0;
   text-align: right;
+  font-weight: 300;
 }
