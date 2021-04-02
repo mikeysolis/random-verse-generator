@@ -3,7 +3,6 @@ import { useLazyQuery } from '@apollo/client';
 import {
   IonContent,
   IonPage,
-  IonSpinner,
   IonSlides,
   IonSlide,
   IonSegment,
