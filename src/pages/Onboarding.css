@@ -1,4 +1,4 @@
-ion-slide ion-img {
+ion-slide img {
   padding: 15%;
 }
 .ion-slides-onboarding {
@@ -16,7 +16,7 @@ ion-slide ion-img {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 
 .swiper-pagination-bullet {
