@@ -2,19 +2,19 @@ import { useState, useRef } from 'react';
 import { useLazyQuery } from '@apollo/client';
 import {
   IonContent,
-  IonHeader,
   IonPage,
-  IonTitle,
-  IonToolbar,
   IonSpinner,
   IonSlides,
   IonSlide,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
 } from '@ionic/react';
 
 import './Home.css';
 import { GET_RANDOM_VERSES } from '../lib/queries';
 import { useContext } from '../lib/context';
-import VolumeSegment from '../components/VolumeSegment';
+import SkeletonVerse from '../components/SkeletonVerse';
 
 const Home: React.FC = () => {
   const { verses, updateVerses } = useContext();
@@ -45,10 +45,6 @@ const Home: React.FC = () => {
     fetchPolicy: 'no-cache',
   });
 
-  const onIonSegmentChangeHandler = (e: any) => {
-    setVolumeId(e.detail.value);
-  };
-
   const onIonSlideDidChangeHandler = async () => {
     const sliderCurrentIndex = await sliderRef.current?.getActiveIndex();
 
@@ -61,8 +57,7 @@ const Home: React.FC = () => {
 
   if (!volumeId) {
     return (
-      <HomeLayout>
-        <VolumeSegment changeHandler={onIonSegmentChangeHandler} />
+      <HomeLayout setVolumeId={setVolumeId}>
         <div className="container">
           <p>Please select a volume of scripture.</p>
         </div>
@@ -72,23 +67,22 @@ const Home: React.FC = () => {
 
   if (loading) {
     return (
-      <HomeLayout>
-        <VolumeSegment changeHandler={onIonSegmentChangeHandler} />
+      <HomeLayout setVolumeId={setVolumeId}>
         <div className="container">
-          <IonSpinner />
+          <SkeletonVerse />
         </div>
       </HomeLayout>
     );
   }
 
   return (
-    <HomeLayout>
-      <VolumeSegment changeHandler={onIonSegmentChangeHandler} />
+    <HomeLayout setVolumeId={setVolumeId}>
       <div className="container">
         <IonSlides
           ref={sliderRef}
           onIonSlideDidChange={onIonSlideDidChangeHandler}
           onIonSlideReachEnd={onIonSlideReachEndHandler}
+          className="ion-slides-home"
         >
           {verses.map(verse => (
             <IonSlide key={verse.verseTitle}>
@@ -101,7 +95,7 @@ const Home: React.FC = () => {
             </IonSlide>
           ))}
           <IonSlide key={'empty verse'}>
-            <IonSpinner />
+            <SkeletonVerse />
           </IonSlide>
         </IonSlides>
       </div>
@@ -109,15 +103,54 @@ const Home: React.FC = () => {
   );
 };
 
-const HomeLayout: React.FC = ({ children }) => {
+interface VolumeSegmentProps {
+  changeHandler: (e: any) => void;
+}
+
+const VolumeSegment: React.FC<VolumeSegmentProps> = ({ changeHandler }) => {
+  const onIonChangeHandler = (e: any) => {
+    changeHandler(e);
+  };
+
+  return (
+    <IonSegment
+      onIonChange={onIonChangeHandler}
+      scrollable={true}
+      swipeGesture={false}
+      color="secondary"
+    >
+      <IonSegmentButton value="1">
+        <IonLabel>OT</IonLabel>
+      </IonSegmentButton>
+      <IonSegmentButton value="2">
+        <IonLabel>NT</IonLabel>
+      </IonSegmentButton>
+      <IonSegmentButton value="3">
+        <IonLabel>BM</IonLabel>
+      </IonSegmentButton>
+      <IonSegmentButton value="4">
+        <IonLabel>DC</IonLabel>
+      </IonSegmentButton>
+      <IonSegmentButton value="5">
+        <IonLabel>PGP</IonLabel>
+      </IonSegmentButton>
+    </IonSegment>
+  );
+};
+
+interface HomeLayoutProps {
+  setVolumeId: (e: any) => void;
+}
+
+const HomeLayout: React.FC<HomeLayoutProps> = ({ setVolumeId, children }) => {
+  const onIonSegmentChangeHandler = (e: any) => {
+    setVolumeId(e.detail.value);
+  };
+
   return (
     <IonPage>
-      <IonHeader className="ion-no-border">
-        <IonToolbar>
-          <IonTitle>Scripture Generator</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent>{children}</IonContent>
+      <IonContent color="primary">{children}</IonContent>
+      <VolumeSegment changeHandler={onIonSegmentChangeHandler} />
     </IonPage>
   );
 };

@@ -1,0 +1,13 @@
+.custom-skeleton ion-skeleton-text {
+  line-height: 1.3rem;
+  margin-bottom: 1rem;
+}
+
+.custom-skeleton ion-skeleton-text:last-child {
+  margin-bottom: 0;
+}
+
+.skeleton-verse-title {
+  margin-top: 1rem;
+  float: right;
+}
