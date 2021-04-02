@@ -5,6 +5,7 @@ import {
   IonButton,
   IonSlide,
   IonSlides,
+  IonImg,
 } from '@ionic/react';
 
 import './Onboarding.css';
@@ -37,7 +38,7 @@ const Onboarding: React.FC<OnboardingProps> = ({
           className="ion-slides-onboarding"
         >
           <IonSlide className="ion-padding swiper-slide-onboarding">
-            <img src="assets/slide1.svg" alt="" />
+            <IonImg src="assets/slide1.svg" alt="" />
 
             <div className="slider-text">
               <h2>Hello & Welcome!</h2>
@@ -55,7 +56,7 @@ const Onboarding: React.FC<OnboardingProps> = ({
             </div>
           </IonSlide>
           <IonSlide className="ion-padding swiper-slide-onboarding">
-            <img src="assets/slide2.svg" alt="" />
+            <IonImg src="assets/slide2.svg" alt="" />
 
             <div className="slider-text">
               <h2>Select a Volume</h2>
@@ -77,7 +78,7 @@ const Onboarding: React.FC<OnboardingProps> = ({
             </div>
           </IonSlide>
           <IonSlide className="ion-padding swiper-slide-onboarding">
-            <img src="assets/slide3.svg" alt="" />
+            <IonImg src="assets/slide3.svg" alt="" />
 
             <div className="slider-text">
               <h2>Swipe Is Your Friend</h2>
@@ -95,7 +96,7 @@ const Onboarding: React.FC<OnboardingProps> = ({
             </div>
           </IonSlide>
           <IonSlide className="ion-padding swiper-slide-onboarding">
-            <img src="assets/slide2.svg" alt="" />
+            <IonImg src="assets/slide2.svg" alt="" />
 
             <div className="slider-text">
               <h2>Change the Volume</h2>
@@ -116,7 +117,7 @@ const Onboarding: React.FC<OnboardingProps> = ({
             </div>
           </IonSlide>
           <IonSlide className="ion-padding swiper-slide-onboarding">
-            <img src="assets/slide4.svg" alt="" />
+            <IonImg src="assets/slide4.svg" alt="" />
 
             <div className="slider-text">
               <h2>It's that Simple!</h2>

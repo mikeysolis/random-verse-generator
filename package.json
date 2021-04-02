@@ -2,10 +2,6 @@
   "name": "random-verse-generator",
   "description": "PWA and mobile apps that generates random verses from the scriptures.",
   "version": "0.0.1",
-  "engines": {
-    "node": ">=14",
-    "npm": ">=7"
-  },
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.3.13",
