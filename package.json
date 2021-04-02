@@ -1,6 +1,11 @@
 {
   "name": "random-verse-generator",
+  "description": "PWA and mobile apps that generates random verses from the scriptures.",
   "version": "0.0.1",
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=7.0.0"
+  },
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.3.13",
@@ -64,6 +69,5 @@
   },
   "devDependencies": {
     "@capacitor/cli": "2.4.7"
-  },
-  "description": "An Ionic project"
+  }
 }
