@@ -5,7 +5,6 @@ import { IonReactRouter } from '@ionic/react-router';
 import { ApolloProvider } from '@apollo/client';
 
 import createApolloClient from './lib/apollo/apolloClient';
-import { ContextProvider } from './lib/state/context';
 import { AppContextProvider } from './lib/state/State';
 import { createStorage, get } from './lib/utils/ionicStorage';
 import Home from './pages/Home';
@@ -50,31 +49,29 @@ const App: React.FC = () => {
 
   return (
     <AppContextProvider>
-      <ContextProvider>
-        <ApolloProvider client={client}>
-          <IonApp>
-            <IonReactRouter>
-              <IonRouterOutlet>
-                <Route
-                  exact
-                  path="/home"
-                  render={() => {
-                    return tutorialCompleted ? (
-                      <Home />
-                    ) : (
-                      <Onboarding
-                        completedTutorialHandler={setTutorialCompleted}
-                      />
-                    );
-                  }}
-                />
-                <Route exact path="/test" component={Test} />
-                <Redirect exact from="/" to="/home" />
-              </IonRouterOutlet>
-            </IonReactRouter>
-          </IonApp>
-        </ApolloProvider>
-      </ContextProvider>
+      <ApolloProvider client={client}>
+        <IonApp>
+          <IonReactRouter>
+            <IonRouterOutlet>
+              <Route
+                exact
+                path="/home"
+                render={() => {
+                  return tutorialCompleted ? (
+                    <Home />
+                  ) : (
+                    <Onboarding
+                      completedTutorialHandler={setTutorialCompleted}
+                    />
+                  );
+                }}
+              />
+              <Route exact path="/test" component={Test} />
+              <Redirect exact from="/" to="/home" />
+            </IonRouterOutlet>
+          </IonReactRouter>
+        </IonApp>
+      </ApolloProvider>
     </AppContextProvider>
   );
 };

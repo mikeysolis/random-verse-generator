@@ -12,11 +12,12 @@ import {
 
 import './Home.css';
 import { GET_RANDOM_VERSES } from '../lib/apollo/queries';
-import { useContext } from '../lib/state/context';
+import { useAppContext } from '../lib/state/State';
+import { ActionType } from '../lib/state/reducer';
 import SkeletonVerse from '../components/SkeletonVerse';
 
 const Home: React.FC = () => {
-  const { verses, updateVerses } = useContext();
+  const { state, dispatch } = useAppContext();
   const [volumeId, setVolumeId] = useState<string | undefined>('');
   const [sliderIndex, setSliderIndex] = useState<number>(0);
   const [isFirstFetch, setIsFirstFetch] = useState(true);
@@ -28,7 +29,13 @@ const Home: React.FC = () => {
       volumeId,
     },
     onCompleted: async data => {
-      updateVerses(data.get_random_verses, sliderIndex);
+      dispatch({
+        type: ActionType.ADD_VERSES,
+        payload: {
+          verses: data.get_random_verses,
+          // sliderIndex,
+        },
+      });
 
       if (isFirstFetch) {
         sliderRef.current?.slideTo(sliderIndex, 0);
@@ -54,21 +61,21 @@ const Home: React.FC = () => {
     fetchVerses();
   };
 
-  if (!volumeId) {
-    return (
-      <HomeLayout setVolumeId={setVolumeId}>
-        <div className="container">
-          <p>Please select a volume of scripture.</p>
-        </div>
-      </HomeLayout>
-    );
-  }
-
   if (loading) {
     return (
       <HomeLayout setVolumeId={setVolumeId}>
         <div className="container">
           <SkeletonVerse />
+        </div>
+      </HomeLayout>
+    );
+  }
+
+  if (!volumeId) {
+    return (
+      <HomeLayout setVolumeId={setVolumeId}>
+        <div className="container">
+          <p>Please select a volume of scripture.</p>
         </div>
       </HomeLayout>
     );
@@ -83,7 +90,7 @@ const Home: React.FC = () => {
           onIonSlideReachEnd={onIonSlideReachEndHandler}
           className="ion-slides-home"
         >
-          {verses.map(verse => (
+          {state.verses.map(verse => (
             <IonSlide key={verse.verseTitle}>
               <figure className="verse">
                 <blockquote>{verse.scriptureText}</blockquote>
