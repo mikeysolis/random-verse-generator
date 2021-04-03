@@ -11,8 +11,8 @@ import {
 } from '@ionic/react';
 
 import './Home.css';
-import { GET_RANDOM_VERSES } from '../lib/queries';
-import { useContext } from '../lib/context';
+import { GET_RANDOM_VERSES } from '../lib/apollo/queries';
+import { useContext } from '../lib/state/context';
 import SkeletonVerse from '../components/SkeletonVerse';
 
 const Home: React.FC = () => {

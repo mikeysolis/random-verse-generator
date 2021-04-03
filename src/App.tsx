@@ -4,10 +4,10 @@ import { IonApp, IonRouterOutlet } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { ApolloProvider } from '@apollo/client';
 
-import createApolloClient from './lib/apolloClient';
-import { ContextProvider } from './lib/context';
-import { AppContextProvider } from './lib/State';
-import { createStorage, get } from './lib/ionicStorage';
+import createApolloClient from './lib/apollo/apolloClient';
+import { ContextProvider } from './lib/state/context';
+import { AppContextProvider } from './lib/state/State';
+import { createStorage, get } from './lib/utils/ionicStorage';
 import Home from './pages/Home';
 import Onboarding from './pages/Onboarding';
 import Test from './pages/Test';

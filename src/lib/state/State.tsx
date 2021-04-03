@@ -1,9 +1,19 @@
 import React, { createContext, useReducer } from 'react';
 
 import { reducer, Action } from './reducer';
+import { logger } from '../utils/logger';
+
+const loggerReducer = logger(reducer);
+
+export interface Verse {
+  volumeTitle: string;
+  verseTitle: string;
+  scriptureText: string;
+  verseId: number;
+}
 
 export interface StateContext {
-  count: number;
+  verses: Verse[];
 }
 
 interface Store {
@@ -12,7 +22,7 @@ interface Store {
 }
 
 const initialState: StateContext = {
-  count: 0,
+  verses: [],
 };
 
 let AppContext = createContext<Store>({
@@ -25,7 +35,7 @@ export const AppContextProvider: React.FC = ({ children }) => {
     ...initialState,
   };
 
-  let [state, dispatch] = useReducer(reducer, fullInitialState);
+  let [state, dispatch] = useReducer(loggerReducer, fullInitialState);
 
   return (
     <AppContext.Provider value={{ state, dispatch }}>

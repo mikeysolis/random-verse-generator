@@ -8,7 +8,7 @@ import {
 } from '@ionic/react';
 
 import './Onboarding.css';
-import { set } from '../lib/ionicStorage';
+import { set } from '../lib/utils/ionicStorage';
 
 interface OnboardingProps {
   completedTutorialHandler: (e: boolean) => void;
