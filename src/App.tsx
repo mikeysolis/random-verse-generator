@@ -6,9 +6,11 @@ import { ApolloProvider } from '@apollo/client';
 
 import createApolloClient from './lib/apolloClient';
 import { ContextProvider } from './lib/context';
+import { AppContextProvider } from './lib/State';
 import { createStorage, get } from './lib/ionicStorage';
 import Home from './pages/Home';
 import Onboarding from './pages/Onboarding';
+import Test from './pages/Test';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -47,30 +49,33 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <ContextProvider>
-      <ApolloProvider client={client}>
-        <IonApp>
-          <IonReactRouter>
-            <IonRouterOutlet>
-              <Route
-                exact
-                path="/home"
-                render={() => {
-                  return tutorialCompleted ? (
-                    <Home />
-                  ) : (
-                    <Onboarding
-                      completedTutorialHandler={setTutorialCompleted}
-                    />
-                  );
-                }}
-              />
-              <Redirect exact from="/" to="/home" />
-            </IonRouterOutlet>
-          </IonReactRouter>
-        </IonApp>
-      </ApolloProvider>
-    </ContextProvider>
+    <AppContextProvider>
+      <ContextProvider>
+        <ApolloProvider client={client}>
+          <IonApp>
+            <IonReactRouter>
+              <IonRouterOutlet>
+                <Route
+                  exact
+                  path="/home"
+                  render={() => {
+                    return tutorialCompleted ? (
+                      <Home />
+                    ) : (
+                      <Onboarding
+                        completedTutorialHandler={setTutorialCompleted}
+                      />
+                    );
+                  }}
+                />
+                <Route exact path="/test" component={Test} />
+                <Redirect exact from="/" to="/home" />
+              </IonRouterOutlet>
+            </IonReactRouter>
+          </IonApp>
+        </ApolloProvider>
+      </ContextProvider>
+    </AppContextProvider>
   );
 };
 
