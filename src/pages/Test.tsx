@@ -6,37 +6,34 @@ import {
   IonSegment,
   IonSegmentButton,
   IonLabel,
-  useIonViewWillEnter,
   IonInfiniteScroll,
-  IonInfiniteScrollContent,
+  IonSpinner,
   IonCard,
 } from '@ionic/react';
 
+import './Test.css';
+import SkeletonVerse from '../components/SkeletonVerse';
 import { useAppContext } from '../lib/state/State';
 import { ActionType } from '../lib/state/reducer';
-import { GET_RANDOM_VERSES } from '../lib/apollo/queries';
+import { GET_RANDOM_VERSES_FROM_VOLUME } from '../lib/apollo/queries';
 
-interface TestProps {}
-
-const Test: React.FC<TestProps> = () => {
+const Test: React.FC = () => {
   const { state, dispatch } = useAppContext();
-  const [volumeId, setVolumeId] = useState<number | undefined>(1);
-  const [disableInfiniteScroll, setDisableInfiniteScroll] = useState<boolean>(
-    false
-  );
-  const [fetchVerses, { loading }] = useLazyQuery(GET_RANDOM_VERSES, {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [volumeId, setVolumeId] = useState<number | undefined>(undefined);
+  const [fetchVerses] = useLazyQuery(GET_RANDOM_VERSES_FROM_VOLUME, {
     variables: {
       limit: 10,
       volumeId,
     },
     onCompleted: async data => {
       dispatch({
-        type: ActionType.ADD_VERSES,
+        type: ActionType.CONCAT_VERSES,
         payload: {
-          verses: data.get_random_verses,
+          verses: data.get_random_verses_from_volume,
         },
       });
-      setDisableInfiniteScroll(state.verses.length >= 20 ? true : false);
+      setLoading(false);
     },
     onError: error => {
       console.log('error', error);
@@ -44,33 +41,68 @@ const Test: React.FC<TestProps> = () => {
     fetchPolicy: 'no-cache',
   });
 
-  useIonViewWillEnter(async () => {
-    fetchVerses();
-  });
-
   const loadData = ($event: CustomEvent<void>) => {
     fetchVerses();
     ($event.target as HTMLIonInfiniteScrollElement).complete();
   };
 
+  const onIonSegmentChangeHandler = (e: any) => {
+    setLoading(true);
+    dispatch({
+      type: ActionType.CLEAR_VERSES,
+      payload: {
+        verses: [],
+      },
+    });
+    setVolumeId(e.detail.value);
+    fetchVerses();
+  };
+
+  if (loading) {
+    return (
+      <IonPage>
+        <VolumeSegment changeHandler={onIonSegmentChangeHandler} />
+        <IonContent color="primary">
+          <div className="container">
+            <SkeletonVerse />
+          </div>
+        </IonContent>
+      </IonPage>
+    );
+  }
+
+  if (state.verses.length === 0) {
+    return (
+      <IonPage>
+        <VolumeSegment changeHandler={onIonSegmentChangeHandler} />
+        <IonContent color="primary">
+          <div className="container">
+            <p>Please select a volume of scripture.</p>
+          </div>
+        </IonContent>
+      </IonPage>
+    );
+  }
+
   return (
-    <TestLayout setVolumeId={setVolumeId}>
-      {state.verses.map((verse: any, i: number) => (
-        <IonCard key={`i-${verse.verseId}`}>
-          <p>Verse Title: {verse.verseTitle}</p>
-          <p>{verse.scriptureText}</p>
-        </IonCard>
-      ))}
-      <IonInfiniteScroll
-        disabled={disableInfiniteScroll}
-        onIonInfinite={(e: CustomEvent<void>) => loadData(e)}
-      >
-        <IonInfiniteScrollContent
-          loadingSpinner="bubbles"
-          loadingText="Loading more verses..."
-        ></IonInfiniteScrollContent>
-      </IonInfiniteScroll>
-    </TestLayout>
+    <IonPage>
+      <VolumeSegment changeHandler={onIonSegmentChangeHandler} />
+      <IonContent color="primary">
+        {state.verses.map((verse: any, i: number) => (
+          <IonCard key={`${i}-${verse.verseId}`}>
+            <p>Verse Title: {verse.verseTitle}</p>
+            <p>{verse.scriptureText}</p>
+          </IonCard>
+        ))}
+        <IonInfiniteScroll
+          onIonInfinite={(e: CustomEvent<void>) => loadData(e)}
+        >
+          <div className="spinner">
+            <IonSpinner />
+          </div>
+        </IonInfiniteScroll>
+      </IonContent>
+    </IonPage>
   );
 };
 
@@ -106,24 +138,6 @@ const VolumeSegment: React.FC<VolumeSegmentProps> = ({ changeHandler }) => {
         <IonLabel>PGP</IonLabel>
       </IonSegmentButton>
     </IonSegment>
-  );
-};
-
-interface TestLayoutProps {
-  setVolumeId: (e: any) => void;
-}
-
-const TestLayout: React.FC<TestLayoutProps> = ({ setVolumeId, children }) => {
-  const onIonSegmentChangeHandler = (e: any) => {
-    setVolumeId(e.detail.value);
-    console.log('event: ', e.detail.value);
-  };
-
-  return (
-    <IonPage>
-      <IonContent color="primary">{children}</IonContent>
-      <VolumeSegment changeHandler={onIonSegmentChangeHandler} />
-    </IonPage>
   );
 };
 

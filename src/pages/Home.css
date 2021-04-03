@@ -7,10 +7,6 @@ ion-segment {
   border-radius: 0;
 }
 
-.ios ion-segment {
-  padding-bottom: 1rem;
-}
-
 ion-segment-button {
   font-size: 0.9rem;
 }

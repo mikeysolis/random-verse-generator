@@ -11,7 +11,7 @@ import {
 } from '@ionic/react';
 
 import './Home.css';
-import { GET_RANDOM_VERSES } from '../lib/apollo/queries';
+import { GET_RANDOM_VERSES_FROM_VOLUME } from '../lib/apollo/queries';
 import { useAppContext } from '../lib/state/State';
 import { ActionType } from '../lib/state/reducer';
 import SkeletonVerse from '../components/SkeletonVerse';
@@ -23,33 +23,36 @@ const Home: React.FC = () => {
   const [isFirstFetch, setIsFirstFetch] = useState(true);
   const sliderRef = useRef<HTMLIonSlidesElement | null>(null);
 
-  const [fetchVerses, { loading }] = useLazyQuery(GET_RANDOM_VERSES, {
-    variables: {
-      limit: 5,
-      volumeId,
-    },
-    onCompleted: async data => {
-      dispatch({
-        type: ActionType.ADD_VERSES,
-        payload: {
-          verses: data.get_random_verses,
-          // sliderIndex,
-        },
-      });
+  const [fetchVerses, { loading }] = useLazyQuery(
+    GET_RANDOM_VERSES_FROM_VOLUME,
+    {
+      variables: {
+        limit: 5,
+        volumeId,
+      },
+      onCompleted: async data => {
+        dispatch({
+          type: ActionType.CONCAT_VERSES,
+          payload: {
+            verses: data.get_random_verses_from_volume,
+            // sliderIndex,
+          },
+        });
 
-      if (isFirstFetch) {
-        sliderRef.current?.slideTo(sliderIndex, 0);
-      } else {
-        sliderRef.current?.slideTo(sliderIndex + 1, 0);
-      }
+        if (isFirstFetch) {
+          sliderRef.current?.slideTo(sliderIndex, 0);
+        } else {
+          sliderRef.current?.slideTo(sliderIndex + 1, 0);
+        }
 
-      setIsFirstFetch(false);
-    },
-    onError: error => {
-      console.log('error', error);
-    },
-    fetchPolicy: 'no-cache',
-  });
+        setIsFirstFetch(false);
+      },
+      onError: error => {
+        console.log('error', error);
+      },
+      fetchPolicy: 'no-cache',
+    }
+  );
 
   const onIonSlideDidChangeHandler = async () => {
     const sliderCurrentIndex = await sliderRef.current?.getActiveIndex();
