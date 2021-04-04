@@ -17,13 +17,15 @@ import {
 } from '@ionic/react';
 
 import './Home.css';
+import { useAppSelector, useAppDispatch } from '../lib/store/hooks';
+import { concat, clear } from '../lib/store/versesSlice';
 import SkeletonCards from '../components/SkeletonCards';
-import { useAppContext } from '../lib/state/State';
-import { ActionType } from '../lib/state/reducer';
+
 import { GET_RANDOM_VERSES_FROM_VOLUME } from '../lib/apollo/queries';
 
 const Home: React.FC = () => {
-  const { state, dispatch } = useAppContext();
+  const state = useAppSelector(state => state.verses);
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(false);
   const [volumeId, setVolumeId] = useState<number | undefined>(undefined);
   const [fetchVerses] = useLazyQuery(GET_RANDOM_VERSES_FROM_VOLUME, {
@@ -32,12 +34,7 @@ const Home: React.FC = () => {
       volumeId,
     },
     onCompleted: async data => {
-      dispatch({
-        type: ActionType.CONCAT_VERSES,
-        payload: {
-          verses: data.get_random_verses_from_volume,
-        },
-      });
+      dispatch(concat(data.get_random_verses_from_volume));
       setLoading(false);
     },
     onError: error => {
@@ -53,12 +50,7 @@ const Home: React.FC = () => {
 
   const onIonSegmentChangeHandler = (e: any) => {
     setLoading(true);
-    dispatch({
-      type: ActionType.CLEAR_VERSES,
-      payload: {
-        verses: [],
-      },
-    });
+    dispatch(clear());
     setVolumeId(e.detail.value);
     fetchVerses();
   };

@@ -1,0 +1,2 @@
+export const VERSES_CONCAT = 'VERSES_CONCAT';
+export const VERSES_CLEAR = 'VERSES_CLEAR';

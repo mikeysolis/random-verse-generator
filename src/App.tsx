@@ -5,7 +5,6 @@ import { IonReactRouter } from '@ionic/react-router';
 import { ApolloProvider } from '@apollo/client';
 
 import createApolloClient from './lib/apollo/apolloClient';
-import { AppContextProvider } from './lib/state/State';
 import { createStorage, get } from './lib/utils/ionicStorage';
 import Home from './pages/Home';
 import Onboarding from './pages/Onboarding';
@@ -47,30 +46,26 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <AppContextProvider>
-      <ApolloProvider client={client}>
-        <IonApp>
-          <IonReactRouter>
-            <IonRouterOutlet>
-              <Route
-                exact
-                path="/home"
-                render={() => {
-                  return tutorialCompleted ? (
-                    <Home />
-                  ) : (
-                    <Onboarding
-                      completedTutorialHandler={setTutorialCompleted}
-                    />
-                  );
-                }}
-              />
-              <Redirect exact from="/" to="/home" />
-            </IonRouterOutlet>
-          </IonReactRouter>
-        </IonApp>
-      </ApolloProvider>
-    </AppContextProvider>
+    <ApolloProvider client={client}>
+      <IonApp>
+        <IonReactRouter>
+          <IonRouterOutlet>
+            <Route
+              exact
+              path="/home"
+              render={() => {
+                return tutorialCompleted ? (
+                  <Home />
+                ) : (
+                  <Onboarding completedTutorialHandler={setTutorialCompleted} />
+                );
+              }}
+            />
+            <Redirect exact from="/" to="/home" />
+          </IonRouterOutlet>
+        </IonReactRouter>
+      </IonApp>
+    </ApolloProvider>
   );
 };
 
