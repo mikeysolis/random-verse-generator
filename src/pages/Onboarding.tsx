@@ -5,6 +5,9 @@ import {
   IonButton,
   IonSlide,
   IonSlides,
+  IonList,
+  IonItem,
+  IonLabel,
 } from '@ionic/react';
 
 import './Onboarding.css';
@@ -62,8 +65,8 @@ const Onboarding: React.FC<OnboardingProps> = ({
 
               <p>
                 After finishing the tutorial you will see a button menu at the
-                bottom of the screen. Simply tap a button to generate random
-                verses from that volume of scripture.
+                top of the screen. Simply tap a button to generate random verses
+                from that volume of scripture.
               </p>
             </div>
 
@@ -118,13 +121,13 @@ const Onboarding: React.FC<OnboardingProps> = ({
           <IonSlide className="ion-padding swiper-slide-onboarding">
             <img height="100%" width="100%" src="assets/slide4.svg" alt="" />
 
-            <div className="slider-text">
+            <div className="slider-text ion-padding-bottom">
               <h2>It's that Simple!</h2>
 
               <p>Enjoy your time studying the scriptures!</p>
             </div>
 
-            <IonButton onClick={skip} color="dark">
+            <IonButton onClick={skip} color="dark" size="small">
               GET STARTED
             </IonButton>
           </IonSlide>

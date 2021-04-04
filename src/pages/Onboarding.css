@@ -1,5 +1,5 @@
 ion-slide img {
-  padding: 15%;
+  padding: 32px 32px 32px 32px;
 }
 .ion-slides-onboarding {
   height: 100%;
@@ -32,12 +32,21 @@ ion-slide img {
 }
 
 .slider-text {
-  padding-top: 5%;
-  line-height: 1.6rem;
+  padding-top: 0;
 }
 
 .slider-text h2 {
+  margin-top: 0;
+  margin-bottom: 0;
   font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.slider-text p {
+  margin: 8px 0 0 0;
+  font-weight: 300;
+  font-size: 1rem;
+  line-height: 1.4rem;
 }
 
 .navigator {
