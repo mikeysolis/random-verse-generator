@@ -22,15 +22,13 @@ import { useAppContext } from '../lib/state/State';
 import { ActionType } from '../lib/state/reducer';
 import { GET_RANDOM_VERSES_FROM_VOLUME } from '../lib/apollo/queries';
 
+const LIMIT = 10;
+
 const Home: React.FC = () => {
   const { state, dispatch } = useAppContext();
   const [loading, setLoading] = useState<boolean>(false);
   const [volumeId, setVolumeId] = useState<number | undefined>(undefined);
   const [fetchVerses] = useLazyQuery(GET_RANDOM_VERSES_FROM_VOLUME, {
-    variables: {
-      limit: 10,
-      volumeId,
-    },
     onCompleted: async data => {
       dispatch({
         type: ActionType.CONCAT_VERSES,
@@ -47,7 +45,12 @@ const Home: React.FC = () => {
   });
 
   const loadData = ($event: CustomEvent<void>) => {
-    fetchVerses();
+    fetchVerses({
+      variables: {
+        limit: LIMIT,
+        volumeId,
+      },
+    });
     ($event.target as HTMLIonInfiniteScrollElement).complete();
   };
 
@@ -60,7 +63,12 @@ const Home: React.FC = () => {
       },
     });
     setVolumeId(e.detail.value);
-    fetchVerses();
+    fetchVerses({
+      variables: {
+        limit: LIMIT,
+        volumeId: e.detail.value,
+      },
+    });
   };
 
   if (loading) {
