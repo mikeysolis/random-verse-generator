@@ -5,9 +5,6 @@ import {
   IonButton,
   IonSlide,
   IonSlides,
-  IonList,
-  IonItem,
-  IonLabel,
 } from '@ionic/react';
 
 import './Onboarding.css';
