@@ -9,7 +9,6 @@ import { AppContextProvider } from './lib/state/State';
 import { createStorage, get } from './lib/utils/ionicStorage';
 import Home from './pages/Home';
 import Onboarding from './pages/Onboarding';
-import Test from './pages/Test';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -66,7 +65,6 @@ const App: React.FC = () => {
                   );
                 }}
               />
-              <Route exact path="/test" component={Test} />
               <Redirect exact from="/" to="/home" />
             </IonRouterOutlet>
           </IonReactRouter>

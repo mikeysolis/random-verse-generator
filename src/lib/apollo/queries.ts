@@ -13,15 +13,4 @@ const GET_RANDOM_VERSES_FROM_VOLUME = gql`
   }
 `;
 
-const GET_RANDOM_VERSES = gql`
-  query RandomVersesFromLibrary($limit: Int!) {
-    get_random_verses(args: { _limit: $limit }) {
-      volumeTitle
-      verseTitle
-      scriptureText
-      verseId
-    }
-  }
-`;
-
-export { GET_RANDOM_VERSES_FROM_VOLUME, GET_RANDOM_VERSES };
+export { GET_RANDOM_VERSES_FROM_VOLUME };

@@ -82,7 +82,7 @@ const Onboarding: React.FC<OnboardingProps> = ({
             <div className="slider-text">
               <h2>Swipe Is Your Friend</h2>
 
-              <p>Swipe left and right to view new and previous verses.</p>
+              <p>Swipe up and down to view new and previous verses.</p>
             </div>
 
             <div className="navigator">

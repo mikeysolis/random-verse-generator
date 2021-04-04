@@ -1,14 +1,19 @@
 ion-toolbar {
-  --border-width: 0;
+  --padding-bottom: 0;
+  --padding-end: 0;
+  --padding-start: 0;
+  --padding-top: 0;
 }
 
 ion-segment {
   margin: 0;
   border-radius: 0;
+  width: 100%;
 }
 
 ion-segment-button {
   font-size: 0.9rem;
+  --border-radius: 0;
 }
 
 .ios ion-segment-button {
@@ -21,8 +26,10 @@ ion-segment-button {
   --margin-bottom: 6px;
 }
 
-.ion-slides-home {
-  height: 100vh;
+ion-card {
+  border-radius: 3px;
+  margin: 10px;
+  box-shadow: rgb(0 0 0 / 12%) 1px 3px 2px;
 }
 
 .container {
@@ -35,20 +42,18 @@ ion-segment-button {
   font-size: 1.2rem;
 }
 
-.verse {
-  margin: 0 16px 0 16px;
-  text-align: justify;
-  line-height: 2rem;
+.verse-title {
+  font-weight: 400;
   font-size: 1.3rem;
 }
 
-.verse blockquote {
-  margin: 0;
-  font-weight: 400;
+.verse {
+  text-align: justify;
+  line-height: 1.7rem;
+  font-size: 1.2rem;
+  font-weight: 300;
 }
 
-.verse-title {
-  margin: 18px 0 0 0;
-  text-align: right;
-  font-weight: 300;
+.spinner {
+  text-align: center;
 }

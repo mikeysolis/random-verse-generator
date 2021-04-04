@@ -1,9 +1,9 @@
 import React, { createContext, useReducer } from 'react';
 
 import { reducer, Action } from './reducer';
-import { logger } from '../utils/logger';
+// import { logger } from '../utils/logger';
 
-const loggerReducer = logger(reducer);
+// const loggerReducer = logger(reducer);
 
 export interface Verse {
   volumeTitle: string;
@@ -35,7 +35,7 @@ export const AppContextProvider: React.FC = ({ children }) => {
     ...initialState,
   };
 
-  let [state, dispatch] = useReducer(loggerReducer, fullInitialState);
+  let [state, dispatch] = useReducer(reducer, fullInitialState);
 
   return (
     <AppContext.Provider value={{ state, dispatch }}>

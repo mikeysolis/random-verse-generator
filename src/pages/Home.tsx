@@ -1,82 +1,83 @@
-import { useState, useRef } from 'react';
+import { useState, ReactElement } from 'react';
 import { useLazyQuery } from '@apollo/client';
 import {
   IonContent,
   IonPage,
-  IonSlides,
-  IonSlide,
   IonSegment,
   IonSegmentButton,
   IonLabel,
+  IonInfiniteScroll,
+  IonSpinner,
+  IonCard,
+  IonHeader,
+  IonToolbar,
+  IonCardTitle,
+  IonCardContent,
+  IonCardHeader,
 } from '@ionic/react';
 
 import './Home.css';
-import { GET_RANDOM_VERSES_FROM_VOLUME } from '../lib/apollo/queries';
+import SkeletonCards from '../components/SkeletonCards';
 import { useAppContext } from '../lib/state/State';
 import { ActionType } from '../lib/state/reducer';
-import SkeletonVerse from '../components/SkeletonVerse';
+import { GET_RANDOM_VERSES_FROM_VOLUME } from '../lib/apollo/queries';
 
 const Home: React.FC = () => {
   const { state, dispatch } = useAppContext();
-  const [volumeId, setVolumeId] = useState<string | undefined>('');
-  const [sliderIndex, setSliderIndex] = useState<number>(0);
-  const [isFirstFetch, setIsFirstFetch] = useState(true);
-  const sliderRef = useRef<HTMLIonSlidesElement | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [volumeId, setVolumeId] = useState<number | undefined>(undefined);
+  const [fetchVerses] = useLazyQuery(GET_RANDOM_VERSES_FROM_VOLUME, {
+    variables: {
+      limit: 10,
+      volumeId,
+    },
+    onCompleted: async data => {
+      dispatch({
+        type: ActionType.CONCAT_VERSES,
+        payload: {
+          verses: data.get_random_verses_from_volume,
+        },
+      });
+      setLoading(false);
+    },
+    onError: error => {
+      console.log('error', error);
+    },
+    fetchPolicy: 'no-cache',
+  });
 
-  const [fetchVerses, { loading }] = useLazyQuery(
-    GET_RANDOM_VERSES_FROM_VOLUME,
-    {
-      variables: {
-        limit: 5,
-        volumeId,
-      },
-      onCompleted: async data => {
-        dispatch({
-          type: ActionType.CONCAT_VERSES,
-          payload: {
-            verses: data.get_random_verses_from_volume,
-            // sliderIndex,
-          },
-        });
-
-        if (isFirstFetch) {
-          sliderRef.current?.slideTo(sliderIndex, 0);
-        } else {
-          sliderRef.current?.slideTo(sliderIndex + 1, 0);
-        }
-
-        setIsFirstFetch(false);
-      },
-      onError: error => {
-        console.log('error', error);
-      },
-      fetchPolicy: 'no-cache',
-    }
-  );
-
-  const onIonSlideDidChangeHandler = async () => {
-    const sliderCurrentIndex = await sliderRef.current?.getActiveIndex();
-
-    if (sliderCurrentIndex !== undefined) setSliderIndex(sliderCurrentIndex);
+  const loadData = ($event: CustomEvent<void>) => {
+    fetchVerses();
+    ($event.target as HTMLIonInfiniteScrollElement).complete();
   };
 
-  const onIonSlideReachEndHandler = () => {
+  const onIonSegmentChangeHandler = (e: any) => {
+    setLoading(true);
+    dispatch({
+      type: ActionType.CLEAR_VERSES,
+      payload: {
+        verses: [],
+      },
+    });
+    setVolumeId(e.detail.value);
     fetchVerses();
   };
 
   if (loading) {
     return (
-      <HomeLayout setVolumeId={setVolumeId}>
-        <div className="container">
-          <SkeletonVerse />
-        </div>
+      <HomeLayout
+        header={<VolumeSegment changeHandler={onIonSegmentChangeHandler} />}
+      >
+        <SkeletonCards />
       </HomeLayout>
     );
   }
 
-  if (!volumeId) {
+  if (state.verses.length === 0) {
     return (
-      <HomeLayout setVolumeId={setVolumeId}>
+      <HomeLayout
+        header={<VolumeSegment changeHandler={onIonSegmentChangeHandler} />}
+      >
         <div className="container">
           <p>Please select a volume of scripture.</p>
         </div>
@@ -85,32 +86,46 @@ const Home: React.FC = () => {
   }
 
   return (
-    <HomeLayout setVolumeId={setVolumeId}>
-      <div className="container">
-        <IonSlides
-          ref={sliderRef}
-          onIonSlideDidChange={onIonSlideDidChangeHandler}
-          onIonSlideReachEnd={onIonSlideReachEndHandler}
-          className="ion-slides-home"
+    <HomeLayout
+      header={<VolumeSegment changeHandler={onIonSegmentChangeHandler} />}
+    >
+      {state.verses.map((verse: any, i: number) => (
+        <IonCard
+          className="verse-card"
+          color="primary"
+          key={`${i}-${verse.verseId}`}
         >
-          {state.verses.map(verse => (
-            <IonSlide key={verse.verseTitle}>
-              <figure className="verse">
-                <blockquote>{verse.scriptureText}</blockquote>
-                <figcaption className="verse-title">
-                  {verse.verseTitle}
-                </figcaption>
-              </figure>
-            </IonSlide>
-          ))}
-          <IonSlide key={'empty verse'}>
-            <SkeletonVerse />
-          </IonSlide>
-        </IonSlides>
-      </div>
+          <IonCardHeader>
+            <IonCardTitle className="verse-title">
+              {verse.verseTitle}
+            </IonCardTitle>
+          </IonCardHeader>
+          <IonCardContent className="verse">
+            {verse.scriptureText}
+          </IonCardContent>
+        </IonCard>
+      ))}
+      <IonInfiniteScroll onIonInfinite={(e: CustomEvent<void>) => loadData(e)}>
+        <div className="spinner">
+          <IonSpinner />
+        </div>
+      </IonInfiniteScroll>
     </HomeLayout>
   );
 };
+
+interface HomeLayoutProps {
+  header: ReactElement;
+}
+
+const HomeLayout: React.FC<HomeLayoutProps> = ({ header, children }) => (
+  <IonPage>
+    <IonHeader>
+      <IonToolbar>{header}</IonToolbar>
+    </IonHeader>
+    <IonContent color="secondary">{children}</IonContent>
+  </IonPage>
+);
 
 interface VolumeSegmentProps {
   changeHandler: (e: any) => void;
@@ -144,23 +159,6 @@ const VolumeSegment: React.FC<VolumeSegmentProps> = ({ changeHandler }) => {
         <IonLabel>PGP</IonLabel>
       </IonSegmentButton>
     </IonSegment>
-  );
-};
-
-interface HomeLayoutProps {
-  setVolumeId: (e: any) => void;
-}
-
-const HomeLayout: React.FC<HomeLayoutProps> = ({ setVolumeId, children }) => {
-  const onIonSegmentChangeHandler = (e: any) => {
-    setVolumeId(e.detail.value);
-  };
-
-  return (
-    <IonPage>
-      <IonContent color="primary">{children}</IonContent>
-      <VolumeSegment changeHandler={onIonSegmentChangeHandler} />
-    </IonPage>
   );
 };
 
