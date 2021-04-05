@@ -124,7 +124,7 @@ const Onboarding: React.FC<OnboardingProps> = ({
               <p>Enjoy your time studying the scriptures!</p>
             </div>
 
-            <IonButton onClick={skip} color="dark" size="small">
+            <IonButton onClick={skip} color="dark">
               GET STARTED
             </IonButton>
           </IonSlide>

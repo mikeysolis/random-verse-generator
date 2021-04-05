@@ -29,6 +29,7 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 import './theme/Global.css';
+import './App.css';
 
 const App: React.FC = () => {
   const client = createApolloClient();
@@ -74,27 +75,10 @@ const App: React.FC = () => {
   return (
     <ApolloProvider client={client}>
       <IonApp>
-        <IonAlert
-          isOpen={showAlert}
-          onDidDismiss={() => setShowAlert(false)}
-          header={'App Update Available'}
-          message={'An updated version of this app is available.  Update now ?'}
-          buttons={[
-            {
-              text: 'Cancel',
-              role: 'cancel',
-              handler: () => {
-                setShowAlert(false);
-              },
-            },
-            {
-              text: 'OK',
-              handler: () => {
-                setShowAlert(false);
-                updateServiceWorker();
-              },
-            },
-          ]}
+        <Alert
+          showAlert={showAlert}
+          setShowAlert={setShowAlert}
+          updateServiceWorker={updateServiceWorker}
         />
         <IonReactRouter>
           <IonRouterOutlet>
@@ -114,6 +98,43 @@ const App: React.FC = () => {
         </IonReactRouter>
       </IonApp>
     </ApolloProvider>
+  );
+};
+
+interface AlertProps {
+  showAlert: boolean;
+  setShowAlert: React.Dispatch<React.SetStateAction<boolean>>;
+  updateServiceWorker: () => void;
+}
+
+const Alert: React.FC<AlertProps> = ({
+  showAlert,
+  setShowAlert,
+  updateServiceWorker,
+}) => {
+  return (
+    <IonAlert
+      isOpen={showAlert}
+      onDidDismiss={() => setShowAlert(false)}
+      header={'App Update Available'}
+      message={'An updated version of this app is available.  Update now ?'}
+      buttons={[
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            setShowAlert(false);
+          },
+        },
+        {
+          text: 'OK',
+          handler: () => {
+            setShowAlert(false);
+            updateServiceWorker();
+          },
+        },
+      ]}
+    />
   );
 };
 
