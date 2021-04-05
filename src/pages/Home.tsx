@@ -156,7 +156,7 @@ const VolumeSegment: React.FC<VolumeSegmentProps> = ({ changeHandler }) => {
         <IonLabel>DC</IonLabel>
       </IonSegmentButton>
       <IonSegmentButton value="5">
-        <IonLabel>PGP</IonLabel>
+        <IonLabel>PP</IonLabel>
       </IonSegmentButton>
     </IonSegment>
   );
