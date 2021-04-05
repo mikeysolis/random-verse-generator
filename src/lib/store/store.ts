@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import versesReducer from './versesSlice';
+import swReducer from './swSlice';
 
 const store = configureStore({
   reducer: {
     verses: versesReducer,
+    sw: swReducer,
   },
 });
 

@@ -71,7 +71,7 @@ const Home: React.FC = () => {
         header={<VolumeSegment changeHandler={onIonSegmentChangeHandler} />}
       >
         <div className="container">
-          <p>Please select a volume of scripture.</p>
+          <p>Please select a volume of scriptures.</p>
         </div>
       </HomeLayout>
     );
