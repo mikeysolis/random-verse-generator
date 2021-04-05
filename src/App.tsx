@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Redirect, Route } from 'react-router-dom';
-import { IonApp, IonRouterOutlet } from '@ionic/react';
+import { IonApp, IonRouterOutlet, IonAlert } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { ApolloProvider } from '@apollo/client';
 
 import createApolloClient from './lib/apollo/apolloClient';
-import { AppContextProvider } from './lib/state/State';
 import { createStorage, get } from './lib/utils/ionicStorage';
+import { useAppSelector } from './lib/store/hooks';
 import Home from './pages/Home';
 import Onboarding from './pages/Onboarding';
 
@@ -32,6 +32,13 @@ import './theme/Global.css';
 
 const App: React.FC = () => {
   const client = createApolloClient();
+  const isServiceWorkerUpdated = useAppSelector(
+    state => state.sw.serviceWorkerUpdated
+  );
+  const serviceWorkerRegistration = useAppSelector(
+    state => state.sw.serviceWorkerRegistration
+  );
+  const [showAlert, setShowAlert] = useState<boolean>(false);
   const [tutorialCompleted, setTutorialCompleted] = useState<boolean>(false);
 
   useEffect(() => {
@@ -46,31 +53,67 @@ const App: React.FC = () => {
     setupStorage();
   }, []);
 
+  useEffect(() => {
+    if (isServiceWorkerUpdated) {
+      setShowAlert(true);
+    }
+  }, [isServiceWorkerUpdated]);
+
+  const updateServiceWorker = () => {
+    const registrationWaiting = serviceWorkerRegistration!.waiting;
+    if (registrationWaiting) {
+      registrationWaiting.postMessage({ type: 'SKIP_WAITING' });
+      registrationWaiting.addEventListener('statechange', (e: any) => {
+        if (e.target.state === 'activated') {
+          window.location.reload();
+        }
+      });
+    }
+  };
+
   return (
-    <AppContextProvider>
-      <ApolloProvider client={client}>
-        <IonApp>
-          <IonReactRouter>
-            <IonRouterOutlet>
-              <Route
-                exact
-                path="/home"
-                render={() => {
-                  return tutorialCompleted ? (
-                    <Home />
-                  ) : (
-                    <Onboarding
-                      completedTutorialHandler={setTutorialCompleted}
-                    />
-                  );
-                }}
-              />
-              <Redirect exact from="/" to="/home" />
-            </IonRouterOutlet>
-          </IonReactRouter>
-        </IonApp>
-      </ApolloProvider>
-    </AppContextProvider>
+    <ApolloProvider client={client}>
+      <IonApp>
+        <IonAlert
+          isOpen={showAlert}
+          onDidDismiss={() => setShowAlert(false)}
+          header={'App Update Available'}
+          message={'An updated version of this app is available.  Update now ?'}
+          buttons={[
+            {
+              text: 'Cancel',
+              role: 'cancel',
+              handler: () => {
+                setShowAlert(false);
+              },
+            },
+            {
+              text: 'OK',
+              handler: () => {
+                setShowAlert(false);
+                updateServiceWorker();
+              },
+            },
+          ]}
+        />
+        <IonReactRouter>
+          <IonRouterOutlet>
+            <Route
+              exact
+              path="/home"
+              render={() => {
+                return tutorialCompleted ? (
+                  <Home />
+                ) : (
+                  <Onboarding completedTutorialHandler={setTutorialCompleted} />
+                );
+              }}
+            />
+            <Redirect exact from="/" to="/home" />
+          </IonRouterOutlet>
+        </IonReactRouter>
+      </IonApp>
+    </ApolloProvider>
   );
 };
 
