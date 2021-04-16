@@ -1,3 +1,7 @@
+ion-menu {
+  --width: 90%;
+}
+
 .clear-button {
   margin: 0;
 }

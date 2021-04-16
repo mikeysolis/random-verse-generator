@@ -1,14 +1,17 @@
 import { configureStore } from '@reduxjs/toolkit';
+import logger from 'redux-logger';
+
 import versesReducer from './versesSlice';
 import swReducer from './swSlice';
-import bookmarksSlice from './bookmarksSlice';
+import bookmarksReducer from './bookmarksSlice';
 
 const store = configureStore({
   reducer: {
     verses: versesReducer,
     sw: swReducer,
-    bookmarks: bookmarksSlice,
+    bookmarks: bookmarksReducer,
   },
+  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(logger),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

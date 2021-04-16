@@ -41,7 +41,7 @@ export const updateBookmarks = createAsyncThunk<
   Verse[],
   Verse,
   { state: { bookmarks: { data: Verse[] } } }
->('bookmark/setBookmark', async (bookmark, { getState }) => {
+>('bookmark/updateBookmarks', async (bookmark, { getState }) => {
   const { bookmarks } = getState();
   let newBookmarks: Verse[];
 

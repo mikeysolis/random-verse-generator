@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
 import { Verse } from './types';
+
 interface VersesState {
   data: Verse[];
 }

@@ -97,7 +97,8 @@ const Home: React.FC = () => {
           key={`${i}-${verse.verseId}`}
           verse={verse}
           isBookmarked={isBookmarked(verse.verseId, state.bookmarks.data)}
-          onBookmarkClickHandler={() => onBookmarkClickHandler(verse)}
+          onBookmarkDeleteClickHandler={() => onBookmarkClickHandler(verse)}
+          isVerseForMenu={false}
         />
       ))}
       <IonInfiniteScroll onIonInfinite={(e: CustomEvent<void>) => loadData(e)}>

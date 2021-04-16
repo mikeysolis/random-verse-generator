@@ -4,48 +4,56 @@ import {
   IonCardContent,
   IonCardHeader,
   IonIcon,
-  IonButton,
+  IonFabButton,
 } from '@ionic/react';
-import { bookmark } from 'ionicons/icons';
+import { bookmark, trash } from 'ionicons/icons';
 
 import './VerseCard.css';
 import { Verse } from '../lib/store/types';
 
 interface VerseCardProps {
   verse: Verse;
-  isBookmarked: boolean;
-  onBookmarkClickHandler: (verse: Verse) => void;
+  isBookmarked: boolean | null;
+  onBookmarkDeleteClickHandler: (verse: Verse) => void;
+  isVerseForMenu: boolean;
 }
 
 const VerseCard: React.FC<VerseCardProps> = ({
   verse,
   isBookmarked,
-  onBookmarkClickHandler,
+  onBookmarkDeleteClickHandler,
+  isVerseForMenu,
 }) => {
   return (
-    <IonCard color="primary">
-      <IonCardHeader>
-        <IonCardTitle className="home-ion-card-title">
-          {verse.verseTitle}
-        </IonCardTitle>
-      </IonCardHeader>
-      <IonCardContent className="home-ion-card-content">
-        {verse.scriptureText}
-      </IonCardContent>
+    <>
+      <IonCard color="primary">
+        <IonCardHeader>
+          <IonCardTitle className="home-ion-card-title">
+            {verse.verseTitle}
+          </IonCardTitle>
+        </IonCardHeader>
+        <IonCardContent className="home-ion-card-content">
+          {verse.scriptureText}
+        </IonCardContent>
+      </IonCard>
       <div className="card-button-container">
-        <IonButton
+        <IonFabButton
           size="small"
+          color="light"
           className="verse-option-button"
-          fill="clear"
-          onClick={() => onBookmarkClickHandler(verse)}
+          onClick={() => onBookmarkDeleteClickHandler(verse)}
         >
-          <IonIcon
-            className={`verse-option-icon${isBookmarked ? ' active' : ''}`}
-            icon={bookmark}
-          />
-        </IonButton>
+          {isVerseForMenu ? (
+            <IonIcon className="verse-option-icon" icon={trash} />
+          ) : (
+            <IonIcon
+              className={`verse-option-icon${isBookmarked ? ' active' : ''}`}
+              icon={isVerseForMenu ? trash : bookmark}
+            />
+          )}
+        </IonFabButton>
       </div>
-    </IonCard>
+    </>
   );
 };
 

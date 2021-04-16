@@ -2,21 +2,18 @@ import {
   IonMenu,
   IonContent,
   IonList,
-  IonCard,
-  IonCardHeader,
-  IonCardContent,
-  IonCardTitle,
   IonHeader,
   IonButton,
   IonIcon,
   IonSpinner,
 } from '@ionic/react';
-import { trash, bookmark } from 'ionicons/icons';
+import { bookmark } from 'ionicons/icons';
 
 import './BookmarksMenu.css';
 import { useAppDispatch } from '../lib/store/hooks';
 import { updateBookmarks } from '../lib/store/bookmarksSlice';
 import { Verse } from '../lib/store/types';
+import VerseCard from '../components/VerseCard';
 
 interface BookmarksMenuProps {
   bookmarkState: {
@@ -127,26 +124,15 @@ const BookmarksMenu: React.FC<BookmarksMenuProps> = ({
       <IonContent>
         <IonList>
           {bookmarkState.data.map((bookmark, i) => (
-            <IonCard key={`${i}-${bookmark.verseId}`} color="primary">
-              <IonCardHeader className="menu-ion-card-header">
-                <IonCardTitle className="menu-ion-card-title">
-                  {bookmark.verseTitle}
-                </IonCardTitle>
-              </IonCardHeader>
-              <IonCardContent className="menu-ion-card-content">
-                {bookmark.scriptureText}
-              </IonCardContent>
-              <div className="card-button-container">
-                <IonButton
-                  size="small"
-                  className="verse-option-button"
-                  fill="clear"
-                  onClick={() => onDeleteBookmarkHandler(bookmark)}
-                >
-                  <IonIcon className={`verse-option-icon`} icon={trash} />
-                </IonButton>
-              </div>
-            </IonCard>
+            <VerseCard
+              key={`${i}-${bookmark.verseId}`}
+              verse={bookmark}
+              isBookmarked={null}
+              onBookmarkDeleteClickHandler={() =>
+                onDeleteBookmarkHandler(bookmark)
+              }
+              isVerseForMenu={true}
+            />
           ))}
         </IonList>
       </IonContent>
