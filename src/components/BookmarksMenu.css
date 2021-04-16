@@ -1,0 +1,37 @@
+.clear-button {
+  margin: 0;
+}
+
+.menu-ion-card-header {
+  padding: 10px;
+}
+
+.menu-ion-card-title {
+  font-weight: 400;
+  font-size: 1.2rem;
+}
+
+.menu-ion-card-content {
+  text-align: justify;
+  line-height: 1.2rem;
+  font-size: 1.1rem;
+  font-weight: 300;
+  padding: 10px;
+}
+
+.bookmarks-menu-title {
+  padding: 0 8px;
+}
+
+.bookmark-icon-example {
+  margin: 20px;
+  text-align: center;
+}
+
+.bookmark-icon-example ion-icon {
+  font-size: 48px;
+}
+
+.bookmarks-menu-spinner {
+  text-align: center;
+}

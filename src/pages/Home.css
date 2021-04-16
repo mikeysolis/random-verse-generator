@@ -26,12 +26,6 @@ ion-segment-button {
   --margin-bottom: 6px;
 }
 
-ion-card {
-  border-radius: 3px;
-  margin: 10px;
-  box-shadow: rgb(0 0 0 / 12%) 1px 3px 2px;
-}
-
 .container {
   text-align: center;
   position: absolute;
@@ -40,18 +34,6 @@ ion-card {
   top: 50%;
   transform: translateY(-50%);
   font-size: 1.2rem;
-}
-
-.verse-title {
-  font-weight: 400;
-  font-size: 1.3rem;
-}
-
-.verse {
-  text-align: justify;
-  line-height: 1.7rem;
-  font-size: 1.2rem;
-  font-weight: 300;
 }
 
 .spinner {

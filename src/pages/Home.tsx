@@ -8,25 +8,24 @@ import {
   IonLabel,
   IonInfiniteScroll,
   IonSpinner,
-  IonCard,
   IonHeader,
   IonToolbar,
-  IonCardTitle,
-  IonCardContent,
-  IonCardHeader,
 } from '@ionic/react';
 
 import './Home.css';
 import { useAppSelector, useAppDispatch } from '../lib/store/hooks';
 import { concat, clear } from '../lib/store/versesSlice';
-import SkeletonCards from '../components/SkeletonCards';
-
+import { updateBookmarks } from '../lib/store/bookmarksSlice';
+import { isBookmarked } from '../lib/utils/utils';
+import { Verse } from '../lib/store/types';
 import { GET_RANDOM_VERSES_FROM_VOLUME } from '../lib/apollo/queries';
+import SkeletonCards from '../components/SkeletonCards';
+import VerseCard from '../components/VerseCard';
 
 const LIMIT = 10;
 
 const Home: React.FC = () => {
-  const state = useAppSelector(state => state.verses);
+  const state = useAppSelector(state => state);
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(false);
   const [volumeId, setVolumeId] = useState<number | undefined>(undefined);
@@ -63,6 +62,10 @@ const Home: React.FC = () => {
     });
   };
 
+  const onBookmarkClickHandler = (verse: Verse) => {
+    dispatch(updateBookmarks(verse));
+  };
+
   if (loading) {
     return (
       <HomeLayout
@@ -73,7 +76,7 @@ const Home: React.FC = () => {
     );
   }
 
-  if (state.verses.length === 0) {
+  if (state.verses.data.length === 0) {
     return (
       <HomeLayout
         header={<VolumeSegment changeHandler={onIonSegmentChangeHandler} />}
@@ -89,21 +92,13 @@ const Home: React.FC = () => {
     <HomeLayout
       header={<VolumeSegment changeHandler={onIonSegmentChangeHandler} />}
     >
-      {state.verses.map((verse: any, i: number) => (
-        <IonCard
-          className="verse-card"
-          color="primary"
+      {state.verses.data.map((verse: any, i: number) => (
+        <VerseCard
           key={`${i}-${verse.verseId}`}
-        >
-          <IonCardHeader>
-            <IonCardTitle className="verse-title">
-              {verse.verseTitle}
-            </IonCardTitle>
-          </IonCardHeader>
-          <IonCardContent className="verse">
-            {verse.scriptureText}
-          </IonCardContent>
-        </IonCard>
+          verse={verse}
+          isBookmarked={isBookmarked(verse.verseId, state.bookmarks.data)}
+          onBookmarkClickHandler={() => onBookmarkClickHandler(verse)}
+        />
       ))}
       <IonInfiniteScroll onIonInfinite={(e: CustomEvent<void>) => loadData(e)}>
         <div className="spinner">

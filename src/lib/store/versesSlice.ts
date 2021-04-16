@@ -1,19 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
-
-interface Verse {
-  volumeTitle: string;
-  verseTitle: string;
-  scriptureText: string;
-  verseId: number;
-}
-
+import { Verse } from './types';
 interface VersesState {
-  verses: Verse[];
+  data: Verse[];
 }
 
 const initialState: VersesState = {
-  verses: [],
+  data: [],
 };
 
 export const versesSlice = createSlice({
@@ -21,15 +14,15 @@ export const versesSlice = createSlice({
   initialState,
   reducers: {
     concat: (state, action: PayloadAction<Verse[]>) => {
-      const newVerses = state.verses.concat(action.payload);
-      state.verses = newVerses;
+      const newVerses = state.data.concat(action.payload);
+      state.data = newVerses;
     },
     clear: state => {
-      state.verses = [];
+      state.data = [];
     },
   },
 });
 
 export const { concat, clear } = versesSlice.actions;
-export const selectVerses = (state: RootState) => state.verses.verses;
+export const selectVerses = (state: RootState) => state.verses.data;
 export default versesSlice.reducer;

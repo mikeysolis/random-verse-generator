@@ -6,9 +6,11 @@ import { ApolloProvider } from '@apollo/client';
 
 import createApolloClient from './lib/apollo/apolloClient';
 import { createStorage, get } from './lib/utils/ionicStorage';
-import { useAppSelector } from './lib/store/hooks';
+import { useAppSelector, useAppDispatch } from './lib/store/hooks';
+import { loadBookmarks, clearBookmarks } from './lib/store/bookmarksSlice';
 import Home from './pages/Home';
 import Onboarding from './pages/Onboarding';
+import BookmarksMenu from './components/BookmarksMenu';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -33,6 +35,8 @@ import './App.css';
 
 const App: React.FC = () => {
   const client = createApolloClient();
+  const dispatch = useAppDispatch();
+  const bookmarkState = useAppSelector(state => state.bookmarks);
   const isServiceWorkerUpdated = useAppSelector(
     state => state.sw.serviceWorkerUpdated
   );
@@ -55,6 +59,10 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    dispatch(loadBookmarks());
+  }, [dispatch]);
+
+  useEffect(() => {
     if (isServiceWorkerUpdated) {
       setShowAlert(true);
     }
@@ -72,6 +80,10 @@ const App: React.FC = () => {
     }
   };
 
+  const clearBookmarksHandler = () => {
+    dispatch(clearBookmarks());
+  };
+
   return (
     <ApolloProvider client={client}>
       <IonApp>
@@ -81,7 +93,11 @@ const App: React.FC = () => {
           updateServiceWorker={updateServiceWorker}
         />
         <IonReactRouter>
-          <IonRouterOutlet>
+          <BookmarksMenu
+            bookmarkState={bookmarkState}
+            clearBookmarksHandler={clearBookmarksHandler}
+          />
+          <IonRouterOutlet id="main">
             <Route
               exact
               path="/home"
