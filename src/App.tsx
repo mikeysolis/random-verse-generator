@@ -2,9 +2,7 @@ import { useEffect, useState } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import { IonApp, IonRouterOutlet, IonAlert } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { ApolloProvider } from '@apollo/client';
 
-import createApolloClient from './lib/apollo/apolloClient';
 import { createStorage, get } from './lib/utils/ionicStorage';
 import { useAppSelector, useAppDispatch } from './lib/store/hooks';
 import { loadBookmarks, clearBookmarks } from './lib/store/bookmarksSlice';
@@ -34,7 +32,6 @@ import './theme/Global.css';
 import './App.css';
 
 const App: React.FC = () => {
-  const client = createApolloClient();
   const dispatch = useAppDispatch();
   const bookmarkState = useAppSelector(state => state.bookmarks);
   const isServiceWorkerUpdated = useAppSelector(
@@ -85,35 +82,33 @@ const App: React.FC = () => {
   };
 
   return (
-    <ApolloProvider client={client}>
-      <IonApp>
-        <Alert
-          showAlert={showAlert}
-          setShowAlert={setShowAlert}
-          updateServiceWorker={updateServiceWorker}
+    <IonApp>
+      <Alert
+        showAlert={showAlert}
+        setShowAlert={setShowAlert}
+        updateServiceWorker={updateServiceWorker}
+      />
+      <IonReactRouter>
+        <BookmarksMenu
+          bookmarkState={bookmarkState}
+          clearBookmarksHandler={clearBookmarksHandler}
         />
-        <IonReactRouter>
-          <BookmarksMenu
-            bookmarkState={bookmarkState}
-            clearBookmarksHandler={clearBookmarksHandler}
+        <IonRouterOutlet id="main">
+          <Route
+            exact
+            path="/home"
+            render={() => {
+              return tutorialCompleted ? (
+                <Home />
+              ) : (
+                <Onboarding completedTutorialHandler={setTutorialCompleted} />
+              );
+            }}
           />
-          <IonRouterOutlet id="main">
-            <Route
-              exact
-              path="/home"
-              render={() => {
-                return tutorialCompleted ? (
-                  <Home />
-                ) : (
-                  <Onboarding completedTutorialHandler={setTutorialCompleted} />
-                );
-              }}
-            />
-            <Redirect exact from="/" to="/home" />
-          </IonRouterOutlet>
-        </IonReactRouter>
-      </IonApp>
-    </ApolloProvider>
+          <Redirect exact from="/" to="/home" />
+        </IonRouterOutlet>
+      </IonReactRouter>
+    </IonApp>
   );
 };
 

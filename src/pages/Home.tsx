@@ -1,5 +1,4 @@
 import { useState, ReactElement } from 'react';
-import { useLazyQuery } from '@apollo/client';
 import {
   IonContent,
   IonPage,
@@ -14,59 +13,34 @@ import {
 
 import './Home.css';
 import { useAppSelector, useAppDispatch } from '../lib/store/hooks';
-import { concat, clear } from '../lib/store/versesSlice';
+import { clear, concatVerses } from '../lib/store/versesSlice';
 import { updateBookmarks } from '../lib/store/bookmarksSlice';
 import { isBookmarked } from '../lib/utils/utils';
 import { Verse } from '../lib/store/types';
-import { GET_RANDOM_VERSES_FROM_VOLUME } from '../lib/apollo/queries';
 import SkeletonCards from '../components/SkeletonCards';
 import VerseCard from '../components/VerseCard';
-
-const LIMIT = 10;
 
 const Home: React.FC = () => {
   const state = useAppSelector(state => state);
   const dispatch = useAppDispatch();
-  const [loading, setLoading] = useState<boolean>(false);
-  const [volumeId, setVolumeId] = useState<number | undefined>(undefined);
-  const [fetchVerses] = useLazyQuery(GET_RANDOM_VERSES_FROM_VOLUME, {
-    onCompleted: async data => {
-      dispatch(concat(data.get_random_verses_from_volume));
-      setLoading(false);
-    },
-    onError: error => {
-      console.log('error', error);
-    },
-    fetchPolicy: 'no-cache',
-  });
+  const [volumeId, setVolumeId] = useState<number>(1);
 
   const loadData = ($event: CustomEvent<void>) => {
-    fetchVerses({
-      variables: {
-        limit: LIMIT,
-        volumeId,
-      },
-    });
+    dispatch(concatVerses(volumeId));
     ($event.target as HTMLIonInfiniteScrollElement).complete();
   };
 
   const onIonSegmentChangeHandler = (e: any) => {
-    setLoading(true);
-    dispatch(clear());
     setVolumeId(e.detail.value);
-    fetchVerses({
-      variables: {
-        limit: LIMIT,
-        volumeId: e.detail.value,
-      },
-    });
+    dispatch(clear());
+    dispatch(concatVerses(e.detail.value));
   };
 
   const onBookmarkClickHandler = (verse: Verse) => {
     dispatch(updateBookmarks(verse));
   };
 
-  if (loading) {
+  if (state.verses.loading === 'pending') {
     return (
       <HomeLayout
         header={<VolumeSegment changeHandler={onIonSegmentChangeHandler} />}
