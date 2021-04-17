@@ -24,23 +24,26 @@ const Home: React.FC = () => {
   const state = useAppSelector(state => state);
   const dispatch = useAppDispatch();
   const [volumeId, setVolumeId] = useState<number>(1);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const loadData = ($event: CustomEvent<void>) => {
     dispatch(concatVerses(volumeId));
     ($event.target as HTMLIonInfiniteScrollElement).complete();
   };
 
-  const onIonSegmentChangeHandler = (e: any) => {
+  const onIonSegmentChangeHandler = async (e: any) => {
+    setLoading(true);
     setVolumeId(e.detail.value);
     dispatch(clear());
-    dispatch(concatVerses(e.detail.value));
+    await dispatch(concatVerses(e.detail.value));
+    setLoading(false);
   };
 
   const onBookmarkClickHandler = (verse: Verse) => {
     dispatch(updateBookmarks(verse));
   };
 
-  if (state.verses.loading === 'pending') {
+  if (loading) {
     return (
       <HomeLayout
         header={<VolumeSegment changeHandler={onIonSegmentChangeHandler} />}

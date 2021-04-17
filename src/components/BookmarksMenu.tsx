@@ -39,7 +39,7 @@ const BookmarksMenu: React.FC<BookmarksMenuProps> = ({
 
   if (!bookmarkState.data || bookmarkState.data.length === 0) {
     return (
-      <IonMenu menuId="bookmarks" contentId="main">
+      <IonMenuContainer>
         <IonHeader>
           <IonButton
             disabled={true}
@@ -60,13 +60,13 @@ const BookmarksMenu: React.FC<BookmarksMenuProps> = ({
             <IonIcon color="secondary" icon={bookmark} />
           </div>
         </IonContent>
-      </IonMenu>
+      </IonMenuContainer>
     );
   }
 
   if (bookmarkState.loading === 'failed') {
     return (
-      <IonMenu menuId="bookmarks" contentId="main">
+      <IonMenuContainer>
         <IonHeader>
           <IonButton
             disabled={true}
@@ -83,13 +83,13 @@ const BookmarksMenu: React.FC<BookmarksMenuProps> = ({
             later.
           </div>
         </IonContent>
-      </IonMenu>
+      </IonMenuContainer>
     );
   }
 
   if (bookmarkState.loading === 'pending') {
     return (
-      <IonMenu menuId="bookmarks" contentId="main">
+      <IonMenuContainer>
         <IonHeader>
           <IonButton
             disabled={true}
@@ -105,12 +105,12 @@ const BookmarksMenu: React.FC<BookmarksMenuProps> = ({
             <IonSpinner />
           </p>
         </IonContent>
-      </IonMenu>
+      </IonMenuContainer>
     );
   }
 
   return (
-    <IonMenu menuId="bookmarks" contentId="main">
+    <IonMenuContainer>
       <IonHeader>
         <IonButton
           onClick={onClearBookmarksClickHandler}
@@ -136,8 +136,16 @@ const BookmarksMenu: React.FC<BookmarksMenuProps> = ({
           ))}
         </IonList>
       </IonContent>
-    </IonMenu>
+    </IonMenuContainer>
   );
 };
+
+interface IonMenuContainerProps {}
+
+const IonMenuContainer: React.FC<IonMenuContainerProps> = ({ children }) => (
+  <IonMenu menuId="bookmarks" contentId="main">
+    {children}
+  </IonMenu>
+);
 
 export default BookmarksMenu;
