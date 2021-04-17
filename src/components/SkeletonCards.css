@@ -11,3 +11,18 @@
   margin-bottom: 0.5rem;
   width: 35%;
 }
+
+.skeleton-buttons-container {
+  position: relative;
+  top: -32px;
+  margin: 0 0 -32px 0;
+  padding: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.skeleton-card-button {
+  width: 20px;
+  height: 20px;
+}

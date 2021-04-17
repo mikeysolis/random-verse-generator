@@ -4,6 +4,7 @@ import {
   IonCardHeader,
   IonCardContent,
   IonCardTitle,
+  IonFabButton,
 } from '@ionic/react';
 
 import './SkeletonCards.css';
@@ -19,19 +20,28 @@ const SkeletonCards: React.FC = () => (
 );
 
 const Card: React.FC = () => (
-  <IonCard className="custom-skeleton verse-card" color="primary">
-    <IonCardHeader>
-      <IonCardTitle className="skeleton-verse-title">
+  <>
+    <IonCard className="custom-skeleton verse-card" color="primary">
+      <IonCardHeader>
+        <IonCardTitle className="skeleton-verse-title">
+          <IonSkeletonText animated />
+        </IonCardTitle>
+      </IonCardHeader>
+      <IonCardContent className="verse">
         <IonSkeletonText animated />
-      </IonCardTitle>
-    </IonCardHeader>
-    <IonCardContent className="verse">
-      <IonSkeletonText animated />
-      <IonSkeletonText animated />
-      <IonSkeletonText animated />
-      <IonSkeletonText animated />
-    </IonCardContent>
-  </IonCard>
+        <IonSkeletonText animated />
+        <IonSkeletonText animated />
+        <IonSkeletonText animated />
+      </IonCardContent>
+    </IonCard>
+    <div className="card-button-container">
+      <IonFabButton
+        size="small"
+        color="primary"
+        className="verse-option-button"
+      />
+    </div>
+  </>
 );
 
 export default SkeletonCards;
