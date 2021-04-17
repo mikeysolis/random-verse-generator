@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Redirect, Route } from 'react-router-dom';
-import { IonApp, IonRouterOutlet, IonAlert } from '@ionic/react';
+import { IonApp, IonRouterOutlet } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 
 import { createStorage, get } from './lib/utils/ionicStorage';
@@ -9,6 +9,7 @@ import { loadBookmarks, clearBookmarks } from './lib/store/bookmarksSlice';
 import Home from './pages/Home';
 import Onboarding from './pages/Onboarding';
 import BookmarksMenu from './components/BookmarksMenu';
+import AlertPopup from './components/AlertPopup';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -29,7 +30,6 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 import './theme/Global.css';
-import './App.css';
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -40,7 +40,8 @@ const App: React.FC = () => {
   const serviceWorkerRegistration = useAppSelector(
     state => state.sw.serviceWorkerRegistration
   );
-  const [showAlert, setShowAlert] = useState<boolean>(false);
+  const [showSwAlert, setShowSwAlert] = useState<boolean>(false);
+  const [showClearAlert, setShowClearAlert] = useState<boolean>(false);
   const [tutorialCompleted, setTutorialCompleted] = useState<boolean>(false);
 
   useEffect(() => {
@@ -61,7 +62,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (isServiceWorkerUpdated) {
-      setShowAlert(true);
+      setShowSwAlert(true);
     }
   }, [isServiceWorkerUpdated]);
 
@@ -78,15 +79,24 @@ const App: React.FC = () => {
   };
 
   const clearBookmarksHandler = () => {
-    dispatch(clearBookmarks());
+    setShowClearAlert(true);
   };
 
   return (
     <IonApp>
-      <Alert
-        showAlert={showAlert}
-        setShowAlert={setShowAlert}
-        updateServiceWorker={updateServiceWorker}
+      <AlertPopup
+        showAlert={showSwAlert}
+        setShowAlert={setShowSwAlert}
+        actionHandler={updateServiceWorker}
+        header="App Update Available"
+        message="An updated version of this app is available.  Update now?"
+      />
+      <AlertPopup
+        showAlert={showClearAlert}
+        setShowAlert={setShowClearAlert}
+        actionHandler={() => dispatch(clearBookmarks())}
+        header="Confirm Delete"
+        message="Click 'OK' to delete all of your Bookmarks."
       />
       <IonReactRouter>
         <BookmarksMenu
@@ -109,43 +119,6 @@ const App: React.FC = () => {
         </IonRouterOutlet>
       </IonReactRouter>
     </IonApp>
-  );
-};
-
-interface AlertProps {
-  showAlert: boolean;
-  setShowAlert: React.Dispatch<React.SetStateAction<boolean>>;
-  updateServiceWorker: () => void;
-}
-
-const Alert: React.FC<AlertProps> = ({
-  showAlert,
-  setShowAlert,
-  updateServiceWorker,
-}) => {
-  return (
-    <IonAlert
-      isOpen={showAlert}
-      onDidDismiss={() => setShowAlert(false)}
-      header={'App Update Available'}
-      message={'An updated version of this app is available.  Update now ?'}
-      buttons={[
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: () => {
-            setShowAlert(false);
-          },
-        },
-        {
-          text: 'OK',
-          handler: () => {
-            setShowAlert(false);
-            updateServiceWorker();
-          },
-        },
-      ]}
-    />
   );
 };
 
