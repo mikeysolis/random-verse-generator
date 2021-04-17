@@ -8,20 +8,27 @@ import { GET_RANDOM_VERSES_FROM_VOLUME } from '../../lib/apollo/queries';
 interface VersesState {
   data: Verse[];
   loading: 'idle' | 'pending' | 'succeeded' | 'failed';
+  error: string | undefined;
 }
 
 const initialState: VersesState = {
   data: [],
   loading: 'idle',
+  error: undefined,
 };
+
+interface ApolloError {
+  errorMessage: string;
+}
 
 export const concatVerses = createAsyncThunk<
   Verse[],
   number,
   {
     extra: { client: ApolloClient<NormalizedCacheObject> };
+    rejectValue: ApolloError;
   }
->('verse/concatVerses', async (volumeId, { extra }) => {
+>('verse/concatVerses', async (volumeId, { extra, rejectWithValue }) => {
   const { client } = extra;
 
   try {
@@ -33,11 +40,11 @@ export const concatVerses = createAsyncThunk<
         volumeId,
       },
     });
-
     return response.data.get_random_verses_from_volume;
   } catch (error) {
-    console.log('error: ', error);
-    return [];
+    return rejectWithValue({
+      errorMessage: 'Unable to access the database, please try again later.',
+    } as ApolloError);
   }
 });
 
@@ -60,6 +67,7 @@ export const versesSlice = createSlice({
       state.data = newVerses;
     });
     builder.addCase(concatVerses.rejected, (state, action) => {
+      state.error = action.payload?.errorMessage;
       state.loading = 'failed';
     });
     builder.addCase(concatVerses.pending, (state, action) => {

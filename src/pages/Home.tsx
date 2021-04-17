@@ -53,6 +53,18 @@ const Home: React.FC = () => {
     );
   }
 
+  if (state.verses.loading === 'failed') {
+    return (
+      <HomeLayout
+        header={<VolumeSegment changeHandler={onIonSegmentChangeHandler} />}
+      >
+        <div className="container">
+          <p>{state.verses.error}</p>
+        </div>
+      </HomeLayout>
+    );
+  }
+
   if (state.verses.data.length === 0) {
     return (
       <HomeLayout
