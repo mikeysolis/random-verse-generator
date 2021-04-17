@@ -5,7 +5,9 @@ import {
   IonButton,
   IonSlide,
   IonSlides,
+  IonIcon,
 } from '@ionic/react';
+import { book, bookmark } from 'ionicons/icons';
 
 import './Onboarding.css';
 import { set } from '../lib/utils/ionicStorage';
@@ -103,6 +105,29 @@ const Onboarding: React.FC<OnboardingProps> = ({
               <p>
                 Change the volume anytime by tapping a different button from the
                 menu.
+              </p>
+            </div>
+
+            <div className="navigator">
+              <IonButton color="dark" fill="clear" onClick={skip}>
+                SKIP
+              </IonButton>
+              <IonButton color="dark" fill="clear" onClick={next}>
+                NEXT
+              </IonButton>
+            </div>
+          </IonSlide>
+          <IonSlide className="ion-padding swiper-slide-onboarding">
+            <img height="100%" width="100%" src="assets/slide5.svg" alt="" />
+
+            <div className="slider-text">
+              <h2>Save Bookmarks</h2>
+
+              <p>
+                Each verse has an bookmark button{' '}
+                <IonIcon size="small" icon={bookmark} /> Tap it to save the
+                verse as a Bookmark. View your saved bookmarks by swiping from
+                the left side of the screen.
               </p>
             </div>
 
