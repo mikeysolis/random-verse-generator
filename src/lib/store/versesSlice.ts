@@ -31,6 +31,12 @@ export const concatVerses = createAsyncThunk<
 >('verse/concatVerses', async (volumeId, { extra, rejectWithValue }) => {
   const { client } = extra;
 
+  if ([1, 2, 3, 4, 5].filter(n => n === volumeId).length === 0) {
+    return rejectWithValue({
+      errorMessage: 'Unable to locate Volume, please try again later.',
+    } as ApolloError);
+  }
+
   try {
     const response = await client.query({
       query: GET_RANDOM_VERSES_FROM_VOLUME,

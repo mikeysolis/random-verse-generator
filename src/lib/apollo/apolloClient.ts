@@ -1,7 +1,7 @@
 import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
 
 // Setup config vars for apollo client
-const BASE_URL = 'https://api.scripturestudyapps.com/v1/graphql';
+const BASE_URL = process.env.REACT_APP_HASURA_BASE_URL;
 const httpLink = new HttpLink({
   uri: BASE_URL,
 });

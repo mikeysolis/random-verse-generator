@@ -35,7 +35,7 @@ const Home: React.FC = () => {
     setLoading(true);
     setVolumeId(e.detail.value);
     dispatch(clear());
-    await dispatch(concatVerses(e.detail.value));
+    await dispatch(concatVerses(parseInt(e.detail.value)));
     setLoading(false);
   };
 
