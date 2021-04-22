@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Redirect, Route } from 'react-router-dom';
+import { Redirect, Route, useHistory } from 'react-router-dom';
 import {
   IonApp,
   IonRouterOutlet,
@@ -125,25 +125,39 @@ const App: React.FC = () => {
   );
 };
 
-const TabsRouterOutlet: React.FC = () => (
-  <IonTabs>
-    <IonRouterOutlet id="main">
-      <Route exact path="/home" component={Home} />
-      <Route exact path="/favs" component={Favs} />
-      <Redirect exact from="/" to="/home" />
-    </IonRouterOutlet>
-    <IonTabBar slot="bottom">
-      <IonTabButton tab="home" href="/home" target="_self">
-        <IonIcon icon={book} />
-        <IonLabel>Verses</IonLabel>
-      </IonTabButton>
-      <IonTabButton tab="favs" href="/favs" target="_self">
-        <IonIcon icon={heart} />
-        <IonLabel>Favs</IonLabel>
-      </IonTabButton>
-    </IonTabBar>
-  </IonTabs>
-);
+const TabsRouterOutlet: React.FC = () => {
+  // HACK: fix until ionic fixes a bug that causes swiping
+  // the menu to affect router navigation.
+  const history = useHistory();
+  const handleTabClick: any = (href: any) => (ref: any) => {
+    if (!ref) {
+      return;
+    }
+    ref.handleIonTabButtonClick = () => {
+      history.replace(href);
+    };
+  };
+
+  return (
+    <IonTabs>
+      <IonRouterOutlet id="main">
+        <Route exact path="/home" component={Home} />
+        <Route exact path="/favs" component={Favs} />
+        <Redirect exact from="/" to="/home" />
+      </IonRouterOutlet>
+      <IonTabBar slot="bottom">
+        <IonTabButton tab="home" ref={handleTabClick('/home')} href="/home">
+          <IonIcon icon={book} />
+          <IonLabel>Verses</IonLabel>
+        </IonTabButton>
+        <IonTabButton tab="favs" ref={handleTabClick('/favs')} href="/favs">
+          <IonIcon icon={heart} />
+          <IonLabel>Favs</IonLabel>
+        </IonTabButton>
+      </IonTabBar>
+    </IonTabs>
+  );
+};
 
 interface AppRouterOutletProps {
   setTutorialCompleted: React.Dispatch<React.SetStateAction<boolean>>;
