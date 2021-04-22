@@ -121,7 +121,7 @@ const BookmarksMenu: React.FC<BookmarksMenuProps> = ({
           Clear All Bookmarks
         </IonButton>
       </IonHeader>
-      <IonContent>
+      <IonContent className="menu">
         <IonList>
           {bookmarkState.data.map((bookmark, i) => (
             <VerseCard

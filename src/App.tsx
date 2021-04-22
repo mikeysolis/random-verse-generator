@@ -126,7 +126,7 @@ const App: React.FC = () => {
 };
 
 const TabsRouterOutlet: React.FC = () => {
-  // HACK: fix until ionic fixes a bug that causes swiping
+  // HACK: patch until ionic fixes a bug that causes swiping
   // the menu to affect router navigation.
   const history = useHistory();
   const handleTabClick: any = (href: any) => (ref: any) => {

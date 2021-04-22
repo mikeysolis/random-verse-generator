@@ -2,6 +2,13 @@ ion-menu {
   --width: 90%;
 }
 
+ion-content.menu {
+  --padding-top: 0px;
+  --padding-bottom: 0px;
+  --padding-start: 0px;
+  --padding-end: 0px;
+}
+
 .clear-button {
   margin: 0;
 }
