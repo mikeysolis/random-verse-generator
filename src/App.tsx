@@ -1,6 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Redirect, Route } from 'react-router-dom';
-import { IonApp, IonRouterOutlet } from '@ionic/react';
+import {
+  IonApp,
+  IonRouterOutlet,
+  IonTabs,
+  IonTabBar,
+  IonTabButton,
+  IonIcon,
+  IonLabel,
+} from '@ionic/react';
+import { book, heart } from 'ionicons/icons';
 import { IonReactRouter } from '@ionic/react-router';
 
 import { createStorage, get } from './lib/utils/ionicStorage';
@@ -8,6 +17,7 @@ import { useAppSelector, useAppDispatch } from './lib/store/hooks';
 import { loadBookmarks, clearBookmarks } from './lib/store/bookmarksSlice';
 import Home from './pages/Home';
 import Onboarding from './pages/Onboarding';
+import Favs from './pages/Favs';
 import BookmarksMenu from './components/BookmarksMenu';
 import AlertPopup from './components/AlertPopup';
 
@@ -99,27 +109,59 @@ const App: React.FC = () => {
         message="Click 'OK' to delete all of your Bookmarks."
       />
       <IonReactRouter>
-        <BookmarksMenu
-          bookmarkState={bookmarkState}
-          clearBookmarksHandler={clearBookmarksHandler}
-        />
-        <IonRouterOutlet id="main">
-          <Route
-            exact
-            path="/home"
-            render={() => {
-              return tutorialCompleted ? (
-                <Home />
-              ) : (
-                <Onboarding completedTutorialHandler={setTutorialCompleted} />
-              );
-            }}
-          />
-          <Redirect exact from="/" to="/home" />
-        </IonRouterOutlet>
+        {tutorialCompleted ? (
+          <>
+            <BookmarksMenu
+              bookmarkState={bookmarkState}
+              clearBookmarksHandler={clearBookmarksHandler}
+            />
+            <TabsRouterOutlet />
+          </>
+        ) : (
+          <OnboardingRouterOutlet setTutorialCompleted={setTutorialCompleted} />
+        )}
       </IonReactRouter>
     </IonApp>
   );
 };
+
+const TabsRouterOutlet: React.FC = () => (
+  <IonTabs>
+    <IonRouterOutlet id="main">
+      <Route exact path="/home" component={Home} />
+      <Route exact path="/favs" component={Favs} />
+      <Redirect exact from="/" to="/home" />
+    </IonRouterOutlet>
+    <IonTabBar slot="bottom">
+      <IonTabButton tab="home" href="/home" target="_self">
+        <IonIcon icon={book} />
+        <IonLabel>Verses</IonLabel>
+      </IonTabButton>
+      <IonTabButton tab="favs" href="/favs" target="_self">
+        <IonIcon icon={heart} />
+        <IonLabel>Favs</IonLabel>
+      </IonTabButton>
+    </IonTabBar>
+  </IonTabs>
+);
+
+interface AppRouterOutletProps {
+  setTutorialCompleted: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const OnboardingRouterOutlet: React.FC<AppRouterOutletProps> = ({
+  setTutorialCompleted,
+}) => (
+  <IonRouterOutlet>
+    <Route
+      exact
+      path="/home"
+      render={() => (
+        <Onboarding completedTutorialHandler={setTutorialCompleted} />
+      )}
+    />
+    <Redirect exact from="/" to="/home" />
+  </IonRouterOutlet>
+);
 
 export default App;
