@@ -23,15 +23,16 @@ interface ApolloError {
 
 export const concatVerses = createAsyncThunk<
   Verse[],
-  number,
+  string,
   {
     extra: { client: ApolloClient<NormalizedCacheObject> };
     rejectValue: ApolloError;
   }
 >('verse/concatVerses', async (volumeId, { extra, rejectWithValue }) => {
   const { client } = extra;
+  const id = parseInt(volumeId);
 
-  if ([1, 2, 3, 4, 5].filter(n => n === volumeId).length === 0) {
+  if ([1, 2, 3, 4, 5].filter(n => n === id).length === 0) {
     return rejectWithValue({
       errorMessage: 'Unable to locate Volume, please try again later.',
     } as ApolloError);
@@ -43,7 +44,7 @@ export const concatVerses = createAsyncThunk<
       fetchPolicy: 'no-cache',
       variables: {
         limit: 10,
-        volumeId,
+        volumeId: id,
       },
     });
     return response.data.get_random_verses_from_volume;

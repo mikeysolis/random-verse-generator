@@ -23,7 +23,7 @@ import VerseCard from '../components/VerseCard';
 const Home: React.FC = () => {
   const state = useAppSelector(state => state);
   const dispatch = useAppDispatch();
-  const [volumeId, setVolumeId] = useState<number>(1);
+  const [volumeId, setVolumeId] = useState<string>('1');
   const [loading, setLoading] = useState<boolean>(false);
 
   const loadData = ($event: CustomEvent<void>) => {
@@ -31,11 +31,11 @@ const Home: React.FC = () => {
     ($event.target as HTMLIonInfiniteScrollElement).complete();
   };
 
-  const onIonSegmentChangeHandler = async (e: any) => {
+  const onIonSegmentChangeHandler = async (e: CustomEvent) => {
     setLoading(true);
     setVolumeId(e.detail.value);
     dispatch(clear());
-    await dispatch(concatVerses(parseInt(e.detail.value)));
+    await dispatch(concatVerses(e.detail.value));
     setLoading(false);
   };
 
