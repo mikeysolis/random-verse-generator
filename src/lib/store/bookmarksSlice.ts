@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 import { RootState } from './store';
 import { Verse } from './types';
-import { isBookmarked } from '../utils/utils';
+import { isBookmarked } from '../utils/helpers';
 import { createStorage, get, set, remove } from '../utils/ionicStorage';
 
 interface BookmarksState {

@@ -15,7 +15,7 @@ import './Home.css';
 import { useAppSelector, useAppDispatch } from '../lib/store/hooks';
 import { clear, concatVerses } from '../lib/store/versesSlice';
 import { updateBookmarks } from '../lib/store/bookmarksSlice';
-import { isBookmarked } from '../lib/utils/utils';
+import { isBookmarked } from '../lib/utils/helpers';
 import { Verse } from '../lib/store/types';
 import SkeletonCards from '../components/SkeletonCards';
 import VerseCard from '../components/VerseCard';

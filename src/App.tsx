@@ -9,7 +9,7 @@ import {
   IonIcon,
   IonLabel,
 } from '@ionic/react';
-import { book, heart } from 'ionicons/icons';
+import { book, heart, settings } from 'ionicons/icons';
 import { IonReactRouter } from '@ionic/react-router';
 
 import { createStorage, get } from './lib/utils/ionicStorage';
@@ -18,6 +18,8 @@ import { loadBookmarks, clearBookmarks } from './lib/store/bookmarksSlice';
 import Home from './pages/Home';
 import Onboarding from './pages/Onboarding';
 import Favs from './pages/Favs';
+import Account from './pages/Account';
+import { CheckoutSuccess, CheckoutFailed } from './components/Checkout';
 import BookmarksMenu from './components/BookmarksMenu';
 import AlertPopup from './components/AlertPopup';
 
@@ -141,8 +143,15 @@ const TabsRouterOutlet: React.FC = () => {
   return (
     <IonTabs>
       <IonRouterOutlet id="main">
-        <Route exact path="/home" component={Home} />
-        <Route exact path="/favs" component={Favs} />
+        <Route exact path="/:tab(home)" component={Home} />
+        <Route exact path="/:tab(favs)" component={Favs} />
+        <Route exact path="/:tab(account)" component={Account} />
+        <Route
+          exact
+          path="/:tab(account)/success"
+          component={CheckoutSuccess}
+        />
+        <Route exact path="/:tab(account)/failed" component={CheckoutFailed} />
         <Redirect exact from="/" to="/home" />
       </IonRouterOutlet>
       <IonTabBar slot="bottom">
@@ -153,6 +162,14 @@ const TabsRouterOutlet: React.FC = () => {
         <IonTabButton tab="favs" ref={handleTabClick('/favs')} href="/favs">
           <IonIcon icon={heart} />
           <IonLabel>Favs</IonLabel>
+        </IonTabButton>
+        <IonTabButton
+          tab="account"
+          ref={handleTabClick('/account')}
+          href="/account"
+        >
+          <IonIcon icon={settings} />
+          <IonLabel>Account</IonLabel>
         </IonTabButton>
       </IonTabBar>
     </IonTabs>

@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 
 import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
@@ -8,10 +10,16 @@ import reportWebVitals from './reportWebVitals';
 import store from './lib/store/store';
 import { swUpdate, swInit } from './lib/store/swSlice';
 
+export const stripePromise = loadStripe(
+  process.env.REACT_APP_STRIPE_PUBLIC_KEY || 'no stripe public key found'
+);
+
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <Elements stripe={stripePromise}>
+        <App />
+      </Elements>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')
