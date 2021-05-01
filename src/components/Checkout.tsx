@@ -15,11 +15,11 @@ export default function Checkout() {
   };
 
   const handleClick = async () => {
-    const body = {
-      line_items: [product],
-    };
     const { id: sessionId } = await fetchFromAPI('checkouts', {
-      body,
+      body: {
+        line_items: [product],
+      },
+      method: 'POST',
     });
 
     // This if is neccessary until react-stripe-js updates to the

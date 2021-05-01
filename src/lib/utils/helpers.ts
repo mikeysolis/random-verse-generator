@@ -1,3 +1,5 @@
+import { auth } from '../firebase/config';
+
 import { Verse } from '../store/types';
 
 /**
@@ -24,48 +26,23 @@ const API = 'http://localhost:3333';
 
 const fetchFromAPI = async (
   endpointURL: string,
-  opts: { body: any } = { body: null }
+  opts: { body: any; method: string } = { body: null, method: 'POST' }
 ) => {
-  const { method, body } = { method: 'POST', ...opts };
+  const { method, body } = { ...opts };
+
+  const user = auth.currentUser;
+  const token = user && (await user.getIdToken());
+
   const res = await fetch(`${API}/${endpointURL}`, {
     method,
     ...(body && { body: JSON.stringify(body) }),
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
   });
 
   return res.json();
 };
 
-function formatAmountForDisplay(amount: number, currency: string): string {
-  let numberFormat = new Intl.NumberFormat(['en-US'], {
-    style: 'currency',
-    currency: currency,
-    currencyDisplay: 'symbol',
-  });
-  return numberFormat.format(amount);
-}
-
-function formatAmountForStripe(amount: number, currency: string): number {
-  let numberFormat = new Intl.NumberFormat(['en-US'], {
-    style: 'currency',
-    currency: currency,
-    currencyDisplay: 'symbol',
-  });
-  const parts = numberFormat.formatToParts(amount);
-  let zeroDecimalCurrency: boolean = true;
-  for (let part of parts) {
-    if (part.type === 'decimal') {
-      zeroDecimalCurrency = false;
-    }
-  }
-  return zeroDecimalCurrency ? amount : Math.round(amount * 100);
-}
-
-export {
-  isBookmarked,
-  fetchFromAPI,
-  formatAmountForDisplay,
-  formatAmountForStripe,
-};
+export { isBookmarked, fetchFromAPI };

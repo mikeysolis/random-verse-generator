@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import { FirebaseAppProvider } from 'reactfire';
+import { firebaseConfig } from './lib/firebase/config';
 
 import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
@@ -17,9 +19,11 @@ export const stripePromise = loadStripe(
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <Elements stripe={stripePromise}>
-        <App />
-      </Elements>
+      <FirebaseAppProvider firebaseConfig={firebaseConfig}>
+        <Elements stripe={stripePromise}>
+          <App />
+        </Elements>
+      </FirebaseAppProvider>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')
