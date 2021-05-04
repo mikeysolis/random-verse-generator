@@ -1,3 +1,10 @@
+/**
+ * Component: BookmarksMenu
+ * The side menu that is available via swiping from the left.
+ * The menu displays the users current bookmarks and enables
+ * deleting an individual bookmark or all bookmars.
+ */
+
 import {
   IonMenu,
   IonContent,
@@ -29,14 +36,25 @@ const BookmarksMenu: React.FC<BookmarksMenuProps> = ({
 }) => {
   const dispatch = useAppDispatch();
 
+  /**
+   * Function: onClearBookmarksClickHandler
+   * Allows user to delete a single bookmark. Passed down
+   * as a prop.
+   */
   const onClearBookmarksClickHandler = () => {
     clearBookmarksHandler();
   };
 
+  /**
+   * Function: onDeleteBookmarkHandler
+   * Allows deletion of all the user's bookmarks in one
+   * go.
+   */
   const onDeleteBookmarkHandler = (verse: Verse) => {
     dispatch(updateBookmarks(verse));
   };
 
+  // Render if no bookmarks are set.
   if (!bookmarkState.data || bookmarkState.data.length === 0) {
     return (
       <IonMenuContainer>
@@ -64,6 +82,7 @@ const BookmarksMenu: React.FC<BookmarksMenuProps> = ({
     );
   }
 
+  // Render if bookmarks fail to load.
   if (bookmarkState.loading === 'failed') {
     return (
       <IonMenuContainer>
@@ -87,6 +106,8 @@ const BookmarksMenu: React.FC<BookmarksMenuProps> = ({
     );
   }
 
+  // Render if bookmarks are loading. This is likely unneccessary
+  // as bookmarks don't load asyncronously.
   if (bookmarkState.loading === 'pending') {
     return (
       <IonMenuContainer>
@@ -109,6 +130,7 @@ const BookmarksMenu: React.FC<BookmarksMenuProps> = ({
     );
   }
 
+  // Render if there are booksmarks and there are no errors.
   return (
     <IonMenuContainer>
       <IonHeader>
@@ -140,9 +162,11 @@ const BookmarksMenu: React.FC<BookmarksMenuProps> = ({
   );
 };
 
-interface IonMenuContainerProps {}
-
-const IonMenuContainer: React.FC<IonMenuContainerProps> = ({ children }) => (
+/**
+ * Component: IonMenuContainer
+ * Simple component to help keep down clutter above
+ */
+const IonMenuContainer: React.FC = ({ children }) => (
   <IonMenu menuId="bookmarks" contentId="main">
     {children}
   </IonMenu>

@@ -1,3 +1,9 @@
+/**
+ * Page: Home
+ * Landing page for the entire app. Once onboarding is completed
+ * the user is directed here and may start browsing verses.
+ */
+
 import { useState, ReactElement } from 'react';
 import {
   IonContent,
@@ -43,6 +49,7 @@ const Home: React.FC = () => {
     dispatch(updateBookmarks(verse));
   };
 
+  // If verses are loading from Scripture API show skeleton cards.
   if (loading) {
     return (
       <HomeLayout
@@ -53,6 +60,7 @@ const Home: React.FC = () => {
     );
   }
 
+  // If unable to complete a fetch to scripture API show an error.
   if (state.verses.loading === 'failed') {
     return (
       <HomeLayout
@@ -65,6 +73,7 @@ const Home: React.FC = () => {
     );
   }
 
+  // If the user hasn't fetched any verses
   if (state.verses.data.length === 0) {
     return (
       <HomeLayout
@@ -77,6 +86,8 @@ const Home: React.FC = () => {
     );
   }
 
+  // A successfull fetch will end up here. Display the vereses and
+  // setup the infinite scroll.
   return (
     <HomeLayout
       header={<VolumeSegment changeHandler={onIonSegmentChangeHandler} />}
@@ -99,6 +110,10 @@ const Home: React.FC = () => {
   );
 };
 
+/**
+ * Component: HomeLayout
+ * Encapsulate the basic page layout here to decrease complexity above.
+ */
 interface HomeLayoutProps {
   header: ReactElement;
 }
@@ -112,6 +127,11 @@ const HomeLayout: React.FC<HomeLayoutProps> = ({ header, children }) => (
   </IonPage>
 );
 
+/**
+ * Component: VolumeSegment
+ * Dedicated component for the row of bottoms along the top
+ * that control selection of the Volume.
+ */
 interface VolumeSegmentProps {
   changeHandler: (e: any) => void;
 }

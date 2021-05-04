@@ -1,3 +1,8 @@
+/**
+ * Favs: Feature allowing the user to save and revisit favorite
+ * scriptures.
+ */
+
 import { IonContent, IonPage } from '@ionic/react';
 
 const Favs: React.FC = () => {

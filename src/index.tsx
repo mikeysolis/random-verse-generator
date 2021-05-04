@@ -11,9 +11,10 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import store from './lib/store/store';
 import { swUpdate, swInit } from './lib/store/swSlice';
+import { STRIPE_PUBLIC_KEY } from './lib/config';
 
 export const stripePromise = loadStripe(
-  process.env.REACT_APP_STRIPE_PUBLIC_KEY || 'no stripe public key found'
+  STRIPE_PUBLIC_KEY || 'no stripe public key found'
 );
 
 ReactDOM.render(
@@ -29,9 +30,8 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://cra.link/PWA
+// Use the service worker to detect updates. When updated dispatch
+// an action to alert the user of the update and enable them to update.
 serviceWorkerRegistration.register({
   onSuccess: () => store.dispatch(swInit()),
   onUpdate: reg => store.dispatch(swUpdate(reg)),

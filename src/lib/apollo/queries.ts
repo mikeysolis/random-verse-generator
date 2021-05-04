@@ -1,5 +1,7 @@
 import { gql } from '@apollo/client';
 
+// Graphql query that grabs random verses from the
+// Hasura API.
 const GET_RANDOM_VERSES_FROM_VOLUME = gql`
   query RandomVersesFromVolume($limit: Int!, $volumeId: Int!) {
     get_random_verses_from_volume(

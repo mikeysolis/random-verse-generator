@@ -1,3 +1,9 @@
+/**
+ * Dashboard Page: The landing page for the users account related
+ * information (subscription, payment, cards etc.). Uses Firebase
+ * to lock it behind authorization.
+ */
+
 import { Suspense } from 'react';
 import { IonContent, IonPage } from '@ionic/react';
 import { useUser, AuthCheck } from 'reactfire';

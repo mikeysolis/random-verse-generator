@@ -46,16 +46,26 @@ import './theme/Global.css';
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
   const bookmarkState = useAppSelector(state => state.bookmarks);
+
+  // Setup state for checking is app has been updated via
+  // the service worker.
   const isServiceWorkerUpdated = useAppSelector(
     state => state.sw.serviceWorkerUpdated
   );
   const serviceWorkerRegistration = useAppSelector(
     state => state.sw.serviceWorkerRegistration
   );
+
+  // Setup state for alerts in regards app updates and confirmating
+  // deletion of bookmarks.
   const [showSwAlert, setShowSwAlert] = useState<boolean>(false);
   const [showClearAlert, setShowClearAlert] = useState<boolean>(false);
+
+  // State to help determine is the onboarding tutorial has been completed.
   const [tutorialCompleted, setTutorialCompleted] = useState<boolean>(false);
 
+  // On initialization check storage to determine if onboarding
+  // has already been completed.
   useEffect(() => {
     const setupStorage = async () => {
       await createStorage('GeneratorDB');
@@ -68,16 +78,22 @@ const App: React.FC = () => {
     setupStorage();
   }, []);
 
+  // Load and update the user's bookmarks as needed.
   useEffect(() => {
     dispatch(loadBookmarks());
   }, [dispatch]);
 
+  // If an app udated is detected show an alert to the user.
   useEffect(() => {
     if (isServiceWorkerUpdated) {
       setShowSwAlert(true);
     }
   }, [isServiceWorkerUpdated]);
 
+  /**
+   * Function: run when the user views the service worker
+   * alert and chooses to update immediately.
+   */
   const updateServiceWorker = () => {
     const registrationWaiting = serviceWorkerRegistration!.waiting;
     if (registrationWaiting) {
@@ -90,6 +106,10 @@ const App: React.FC = () => {
     }
   };
 
+  /**
+   * Function: runs when user clicks to clear all their bookmarks.
+   * Open an IonAlert.
+   */
   const clearBookmarksHandler = () => {
     setShowClearAlert(true);
   };
@@ -127,6 +147,11 @@ const App: React.FC = () => {
   );
 };
 
+/**
+ * Component: TabsRouterOutlet
+ * If the user has completed the onboarding process this component
+ * is displayed.
+ */
 const TabsRouterOutlet: React.FC = () => {
   // HACK: patch until ionic fixes a bug that causes swiping
   // the menu to affect router navigation.
@@ -180,11 +205,16 @@ const TabsRouterOutlet: React.FC = () => {
   );
 };
 
-interface AppRouterOutletProps {
+/**
+ * Component: OnboardingRouterOutlet
+ * If the onboarding has not been completed this component
+ * is display instead of the main app.
+ */
+interface OnboardingRouterOutletProps {
   setTutorialCompleted: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const OnboardingRouterOutlet: React.FC<AppRouterOutletProps> = ({
+const OnboardingRouterOutlet: React.FC<OnboardingRouterOutletProps> = ({
   setTutorialCompleted,
 }) => (
   <IonRouterOutlet>

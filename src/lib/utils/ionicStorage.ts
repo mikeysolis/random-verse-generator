@@ -1,7 +1,13 @@
+/**
+ * Standard implementation of @ionic/storage. Allows us
+ * to create a storage object for saving persistant data in our app.
+ */
+
 import { Storage, Drivers } from '@ionic/storage';
 
 let storage: any = false;
 
+// Create the storage object
 export const createStorage = async (name = '__mydb') => {
   storage = new Storage({
     name,
@@ -11,10 +17,12 @@ export const createStorage = async (name = '__mydb') => {
   await storage.create();
 };
 
+// Save a key value pair to storage
 export const set = (key: any, val: any) => {
   storage.set(key, val);
 };
 
+// Retrieve a key value pair from storage
 export const get = async (key: any) => {
   const val = await storage.get(key);
   return val;

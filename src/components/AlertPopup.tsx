@@ -1,3 +1,9 @@
+/**
+ * Component: AlertPopup
+ * Reusable IonAlert component. Currently in use with the
+ * clear bookmarks button and service worker for updating the app.
+ */
+
 import { IonAlert } from '@ionic/react';
 
 import './AlertPopup.css';

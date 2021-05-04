@@ -1,3 +1,9 @@
+/**
+ * Page: Onboarding
+ * This page component is displayed on first use
+ * and until the user completes the onboarding tutorial.
+ */
+
 import { useRef } from 'react';
 import {
   IonContent,
@@ -7,7 +13,7 @@ import {
   IonSlides,
   IonIcon,
 } from '@ionic/react';
-import { book, bookmark } from 'ionicons/icons';
+import { bookmark } from 'ionicons/icons';
 
 import './Onboarding.css';
 import { set } from '../lib/utils/ionicStorage';

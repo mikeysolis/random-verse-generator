@@ -1,3 +1,4 @@
+// Types for store items.
 export interface Verse {
   volumeTitle: string;
   verseTitle: string;

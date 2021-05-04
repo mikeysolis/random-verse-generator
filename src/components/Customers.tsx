@@ -1,8 +1,13 @@
+/**
+ * Components involved in customer authentication with firebase
+ */
+
 import firebase from 'firebase/app';
 import { IonButton } from '@ionic/react';
 
 import { auth, db } from '../lib/firebase/config';
 
+// SignIn Button for Google
 export const SignIn: React.FC = () => {
   const signIn = async () => {
     const credential = await auth.signInWithPopup(
@@ -16,6 +21,7 @@ export const SignIn: React.FC = () => {
   return <IonButton onClick={signIn}>Sign In with Google</IonButton>;
 };
 
+// Signout Button
 interface SignOutProps {
   user: any;
 }

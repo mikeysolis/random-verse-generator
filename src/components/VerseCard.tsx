@@ -1,3 +1,9 @@
+/**
+ * Component: VerseCard
+ * Displays an actual verse of scripture in a pretty IonCard format.
+ * Allows users to bookmark verses.
+ */
+
 import {
   IonCard,
   IonCardTitle,
@@ -11,6 +17,14 @@ import { bookmark, trash } from 'ionicons/icons';
 import './VerseCard.css';
 import { Verse } from '../lib/store/types';
 
+/**
+ * The VerseCard takes multiple props:
+ * verse: the actually verse from the scripture API
+ * isBookmarked: whether the verse has been bookmarked
+ * onBookmarkDeletedClickHandler: allows for deletion of a bookmark
+ * isVerseForMenu: if the verse is displayed on the menu, show a trash can icon
+ * instead of bookmark icon.
+ */
 interface VerseCardProps {
   verse: Verse;
   isBookmarked: boolean | null;

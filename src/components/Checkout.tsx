@@ -1,8 +1,17 @@
+/**
+ * Components related to handling the Stripe Checkout Session.
+ */
+
 import { useStripe } from '@stripe/react-stripe-js';
 import { IonButton, IonPage, IonContent } from '@ionic/react';
 
 import { fetchFromAPI } from '../lib/utils/helpers';
 
+/**
+ * Component: Checkout
+ * Displays the Subscribe button. The Subscribe button hits our Stripe
+ * API and triggers a Stripe Checkout Session.
+ */
 export default function Checkout() {
   const stripe = useStripe();
 
@@ -37,6 +46,12 @@ export default function Checkout() {
   );
 }
 
+/**
+ * Component: CheckoutSuccess
+ * The success page displayed to the user after being
+ * redirected from a success stripe checkout session.
+ * Probably relocate this to its own component at a later date.
+ */
 export function CheckoutSuccess() {
   const url = window.location.href;
   const sessionId = new URL(url).searchParams.get('session_id');
@@ -53,6 +68,11 @@ export function CheckoutSuccess() {
   );
 }
 
+/**
+ * Component: CheckoutFailed
+ * The cancel page displayed to the user after an unccessful
+ * attempt at a Stripe Checkout Session
+ */
 export function CheckoutFailed() {
   return (
     <IonPage>

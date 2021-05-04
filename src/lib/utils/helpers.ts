@@ -1,9 +1,10 @@
 import { auth } from '../firebase/config';
+import { STRIPE_API } from '../config';
 
 import { Verse } from '../store/types';
 
 /**
- * Determine is a verse card is currently bookmarked,
+ * Determine if a verse card is currently bookmarked,
  * returns true or false.
  */
 const isBookmarked = (verseId: number, bookmarks: Verse[]) => {
@@ -19,10 +20,10 @@ const isBookmarked = (verseId: number, bookmarks: Verse[]) => {
 };
 
 /**
- * Fetch data from the Stripe API, set the body
- * and headers, return json.
+ * Fetch data from our Stripe API, set the body
+ * and headers, return json. Adds the authorization
+ * token.
  */
-const API = 'http://localhost:3333';
 
 const fetchFromAPI = async (
   endpointURL: string,
@@ -33,7 +34,7 @@ const fetchFromAPI = async (
   const user = auth.currentUser;
   const token = user && (await user.getIdToken());
 
-  const res = await fetch(`${API}/${endpointURL}`, {
+  const res = await fetch(`${STRIPE_API}/${endpointURL}`, {
     method,
     ...(body && { body: JSON.stringify(body) }),
     headers: {

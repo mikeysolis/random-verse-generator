@@ -1,3 +1,8 @@
+/**
+ * Simple component that displays a pretty looking set up
+ * skeleton cards while the verses are loading the the API.
+ */
+
 import {
   IonSkeletonText,
   IonCard,
@@ -9,8 +14,10 @@ import {
 
 import './SkeletonCards.css';
 
+// Number of desired card.
 const NUMBER_OF_CARDS = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }];
 
+// Loop through and display the assigned number of cards.
 const SkeletonCards: React.FC = () => (
   <>
     {NUMBER_OF_CARDS.map(card => (
@@ -19,6 +26,7 @@ const SkeletonCards: React.FC = () => (
   </>
 );
 
+// A single card
 const Card: React.FC = () => (
   <>
     <IonCard className="custom-skeleton verse-card" color="primary">
