@@ -6,18 +6,10 @@ import { fetchFromAPI } from '../lib/utils/helpers';
 export default function Checkout() {
   const stripe = useStripe();
 
-  const product = {
-    name: 'Bike',
-    description: 'Shiny bike.',
-    amount: 889999,
-    currency: 'usd',
-    quantity: 1,
-  };
-
-  const handleClick = async () => {
+  const handleClick = async (priceId: string) => {
     const { id: sessionId } = await fetchFromAPI('checkouts', {
       body: {
-        line_items: [product],
+        priceId,
       },
       method: 'POST',
     });
@@ -38,7 +30,11 @@ export default function Checkout() {
     }
   };
 
-  return <IonButton onClick={handleClick}>Subscribe</IonButton>;
+  return (
+    <IonButton onClick={() => handleClick('price_1In7IfGxkUd0sje6Is2cWQne')}>
+      Subscribe
+    </IonButton>
+  );
 }
 
 export function CheckoutSuccess() {
