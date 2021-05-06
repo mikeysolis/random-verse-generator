@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Elements } from '@stripe/react-stripe-js';
@@ -20,9 +20,11 @@ export const stripePromise = loadStripe(
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <FirebaseAppProvider firebaseConfig={firebaseConfig}>
+      <FirebaseAppProvider firebaseConfig={firebaseConfig} suspense={true}>
         <Elements stripe={stripePromise}>
-          <App />
+          <Suspense fallback={'loading...'}>
+            <App />
+          </Suspense>
         </Elements>
       </FirebaseAppProvider>
     </Provider>

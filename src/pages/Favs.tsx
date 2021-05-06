@@ -3,14 +3,24 @@
  * scriptures.
  */
 
-import { IonContent, IonPage } from '@ionic/react';
+import { Suspense } from 'react';
+import { AuthCheck } from 'reactfire';
+import { IonContent, IonPage, IonSpinner } from '@ionic/react';
+
+import { SubscribeCheck, SignIn } from '../components/Customers';
 
 const Favs: React.FC = () => {
   return (
     <IonPage>
       <IonContent color="secondary">
         <div className="container">
-          <p>My favs bro!</p>
+          <Suspense fallback={<IonSpinner />}>
+            <AuthCheck fallback={<SignIn />}>
+              <SubscribeCheck>
+                <p>You are subscribed</p>
+              </SubscribeCheck>
+            </AuthCheck>
+          </Suspense>
         </div>
       </IonContent>
     </IonPage>

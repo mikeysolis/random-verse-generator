@@ -5,7 +5,7 @@
  */
 
 import { Suspense } from 'react';
-import { IonContent, IonPage } from '@ionic/react';
+import { IonContent, IonPage, IonSpinner } from '@ionic/react';
 import { useUser, AuthCheck } from 'reactfire';
 
 import Checkout from '../components/Checkout';
@@ -18,7 +18,7 @@ const Account: React.FC = () => {
     <IonPage>
       <IonContent color="secondary">
         <div className="container">
-          <Suspense fallback={'loading user...'}>
+          <Suspense fallback={<IonSpinner />}>
             <AuthCheck fallback={<SignIn />}>
               <p>Hello {user.data && user.data.displayName}</p>
               <Checkout />
