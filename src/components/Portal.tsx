@@ -19,7 +19,16 @@ const Portal: React.FC = () => {
     }
   };
 
-  return <IonButton onClick={handleClick}>Manage Billing</IonButton>;
+  return (
+    <IonButton
+      className="ion-text-uppercase ion-margin-bottom"
+      color="warning"
+      expand="full"
+      onClick={handleClick}
+    >
+      Manage Subscription
+    </IonButton>
+  );
 };
 
 export default Portal;

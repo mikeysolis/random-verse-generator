@@ -7,6 +7,7 @@ import { FirebaseAppProvider } from 'reactfire';
 import { firebaseConfig } from './lib/firebase/config';
 
 import App from './App';
+import LoadingApp from './components/LoadingApp';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import store from './lib/store/store';
@@ -22,7 +23,7 @@ ReactDOM.render(
     <Provider store={store}>
       <FirebaseAppProvider firebaseConfig={firebaseConfig} suspense={true}>
         <Elements stripe={stripePromise}>
-          <Suspense fallback={'loading...'}>
+          <Suspense fallback={<LoadingApp />}>
             <App />
           </Suspense>
         </Elements>

@@ -1,0 +1,43 @@
+.google-login-button {
+  background: transparent;
+  background-image: url(../images/btn_google_signin_dark_normal_web@2x.png);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: none;
+  padding: 0;
+  height: 60px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.google-login-button:focus {
+  background-image: url(../images/btn_google_signin_dark_focus_web@2x.png);
+}
+
+.google-login-button:active {
+  background-image: url(../images/btn_google_signin_dark_pressed_web@2x.png);
+}
+
+@media (prefers-color-scheme: dark) {
+  .google-login-button {
+    background: transparent;
+    background-image: url(../images/btn_google_signin_light_normal_web@2x.png);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: none;
+    padding: 0;
+    height: 60px;
+    width: 100%;
+    cursor: pointer;
+  }
+
+  .google-login-button:focus {
+    background-image: url(../images/btn_google_signin_light_focus_web@2x.png);
+  }
+
+  .google-login-button:active {
+    background-image: url(../images/btn_google_signin_light_pressed_web@2x.png);
+  }
+}

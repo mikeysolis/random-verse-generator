@@ -6,17 +6,26 @@
  */
 
 import firebase from 'firebase/app';
-import { useUser, useFirestore, useFirestoreDocData } from 'reactfire';
+import { useUser, useFirestore, useFirestoreDocData, useAuth } from 'reactfire';
 import { IonButton } from '@ionic/react';
 
-import { auth, db } from '../lib/firebase/config';
+import './Customers.css';
 
-// Component to verify if the logged in user has an ACTIVE subscription
-export const SubscribeCheck: React.FC = ({ children }) => {
+// Component to verify if the logged in user has an ACTIVE subscription.
+// Must be run from within an AuthCheck component
+interface SubscribeCheckProps {
+  fallback?: React.ReactNode;
+}
+
+export const SubscribeCheck: React.FC<SubscribeCheckProps> = ({
+  fallback,
+  children,
+}) => {
   // Grab the current user
   const { data: user } = useUser();
+
   // Retrieve the users Document Ref from firebase
-  const userDetailsRef = useFirestore().collection('users').doc(user.uid);
+  const userDetailsRef = useFirestore().collection('users').doc(user?.uid);
   // Subscribe to the status field on the user Document
   const {
     data: { status },
@@ -24,41 +33,39 @@ export const SubscribeCheck: React.FC = ({ children }) => {
 
   // If the user status is ACTIVE or PAST_DUE allow access, else not.
   return (
-    <>
-      {status === 'ACTIVE' || status === 'PAST_DUE' ? (
-        children
-      ) : (
-        <p>Must be subscribed to use this feature</p>
-      )}
-    </>
+    <>{status === 'ACTIVE' || status === 'PAST_DUE' ? children : fallback}</>
   );
 };
 
 // SignIn Button for Google
-export const SignIn: React.FC = () => {
+export const SignInWithGoogle: React.FC = () => {
+  const auth = useAuth();
+  const firestore = useFirestore();
+
   const signIn = async () => {
     const credential = await auth.signInWithPopup(
       new firebase.auth.GoogleAuthProvider()
     );
 
     const { uid, email } = credential.user!;
-    db.collection('users').doc(uid).set({ email }, { merge: true });
+    firestore.collection('users').doc(uid).set({ email }, { merge: true });
   };
 
-  return <IonButton onClick={signIn}>Sign In with Google</IonButton>;
+  return <button onClick={signIn} className="google-login-button" />;
 };
 
 // Signout Button
-interface SignOutProps {
-  user: any;
-}
 
-export const SignOut: React.FC<SignOutProps> = ({ user }) => {
+export const SignOut: React.FC = () => {
+  const auth = useAuth();
   return (
-    user && (
-      <IonButton onClick={() => auth.signOut()}>
-        Sign Out User {user.uid}
-      </IonButton>
-    )
+    <IonButton
+      onClick={() => auth.signOut()}
+      className="ion-text-uppercase ion-margin-bottom"
+      color="warning"
+      expand="full"
+    >
+      Sign Out
+    </IonButton>
   );
 };

@@ -3,9 +3,21 @@
  */
 
 import { useStripe } from '@stripe/react-stripe-js';
-import { IonButton, IonPage, IonContent } from '@ionic/react';
+import { Suspense } from 'react';
+import {
+  IonContent,
+  IonPage,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButton,
+  IonText,
+} from '@ionic/react';
+import { AuthCheck } from 'reactfire';
 
 import { fetchFromAPI } from '../lib/utils/helpers';
+import { LoggedIn, LoggedOut, Card } from '../pages/Dashboard';
+import LoadingSpinner from './LoadingSpinner';
 
 /**
  * Component: Checkout
@@ -40,7 +52,12 @@ export default function Checkout() {
   };
 
   return (
-    <IonButton onClick={() => handleClick('price_1In7IfGxkUd0sje6Is2cWQne')}>
+    <IonButton
+      className="ion-text-uppercase ion-margin-bottom"
+      color="warning"
+      expand="full"
+      onClick={() => handleClick('price_1In7IfGxkUd0sje6Is2cWQne')}
+    >
       Subscribe
     </IonButton>
   );
@@ -53,16 +70,26 @@ export default function Checkout() {
  * Probably relocate this to its own component at a later date.
  */
 export function CheckoutSuccess() {
-  const url = window.location.href;
-  const sessionId = new URL(url).searchParams.get('session_id');
+  // const url = window.location.href;
+  // const sessionId = new URL(url).searchParams.get('session_id');
 
   return (
     <IonPage>
-      <IonContent color="secondary">
-        <div className="container">
-          <p>Success page bro!</p>
-          <p>Session ID: {sessionId}</p>
-        </div>
+      <IonHeader>
+        <IonToolbar color="secondary">
+          <IonTitle>Success!</IonTitle>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent className="ion-padding-top">
+        <Card title="Subscription Completed">
+          Thank you for joining our family! You now have access to the entire
+          suite of Scripture Study Apps and all available features!
+        </Card>
+        <Suspense fallback={<LoadingSpinner />}>
+          <AuthCheck fallback={<LoggedOut />}>
+            <LoggedIn />
+          </AuthCheck>
+        </Suspense>
       </IonContent>
     </IonPage>
   );
@@ -76,10 +103,22 @@ export function CheckoutSuccess() {
 export function CheckoutFailed() {
   return (
     <IonPage>
-      <IonContent color="secondary">
-        <div className="container">
-          <p>Failed page bro!</p>
-        </div>
+      <IonHeader>
+        <IonToolbar color="secondary">
+          <IonTitle>Canceled</IonTitle>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent className="ion-padding-top">
+        <Card title="Subscription Signup Canceled">
+          It looks like you may have canceled the subscription process. That's
+          okay, we understand and are looking forward to you joining our family
+          in the future!
+        </Card>
+        <Suspense fallback={<LoadingSpinner />}>
+          <AuthCheck fallback={<LoggedOut />}>
+            <LoggedIn />
+          </AuthCheck>
+        </Suspense>
       </IonContent>
     </IonPage>
   );
