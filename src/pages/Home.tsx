@@ -4,17 +4,15 @@
  * the user is directed here and may start browsing verses.
  */
 
-import { useState, ReactElement } from 'react';
+import { useState } from 'react';
 import {
   IonContent,
   IonPage,
-  IonSegment,
-  IonSegmentButton,
-  IonLabel,
   IonInfiniteScroll,
   IonSpinner,
   IonHeader,
   IonToolbar,
+  useIonModal,
 } from '@ionic/react';
 
 import './Home.css';
@@ -25,18 +23,42 @@ import { isBookmarked } from '../lib/utils/helpers';
 import { Verse } from '../lib/store/types';
 import SkeletonCards from '../components/SkeletonCards';
 import VerseCard from '../components/VerseCard';
+import FavoriteModal from '../components/FavoriteModal';
+import VolumeSegment from '../components/VolumeSegment';
 
 const Home: React.FC = () => {
-  const state = useAppSelector(state => state);
+  // Grab the current verses and bookmarks state from redux
+  const { verses, bookmarks } = useAppSelector(state => state);
+  // Grab the apps dispatch method for handling state
   const dispatch = useAppDispatch();
+  // Track the current VolumeID for the row of buttons at the top of the display
   const [volumeId, setVolumeId] = useState<string>('1');
+  // Loading state to show or hide the skeleton text
   const [loading, setLoading] = useState<boolean>(false);
+  // State to track the current verse the user has selected to set as a Favorite
+  const [favoriteVerse, setFavoriteVerse] = useState<Verse | null>(null);
 
+  // Function to dispatch a redux action that pulls more verses from the API
   const loadData = ($event: CustomEvent<void>) => {
     dispatch(concatVerses(volumeId));
     ($event.target as HTMLIonInfiniteScrollElement).complete();
   };
 
+  // Handler that runs when a user taps to close the Favorites Modal
+  const handleFavoriteModalDismiss = () => {
+    dismissFavoriteModal();
+  };
+
+  // Setup the IonModal hook that pops up when the user taps the Favorites button
+  const [presentFavoriteModal, dismissFavoriteModal] = useIonModal(
+    FavoriteModal,
+    {
+      verse: favoriteVerse,
+      onDismiss: handleFavoriteModalDismiss,
+    }
+  );
+
+  // Function is run when the user changes the Volume of scripture
   const onIonSegmentChangeHandler = async (e: CustomEvent) => {
     setLoading(true);
     setVolumeId(e.detail.value);
@@ -45,40 +67,41 @@ const Home: React.FC = () => {
     setLoading(false);
   };
 
+  // Run when the user taps the Bookmark button for the verse
   const onBookmarkClickHandler = (verse: Verse) => {
     dispatch(updateBookmarks(verse));
+  };
+
+  // Run when the user taps the Favorites button for the verse
+  const onFavoriteClickHandler = (verse: Verse) => {
+    setFavoriteVerse(verse);
+    presentFavoriteModal({ cssClass: 'favorite-modal' });
   };
 
   // If verses are loading from Scripture API show skeleton cards.
   if (loading) {
     return (
-      <HomeLayout
-        header={<VolumeSegment changeHandler={onIonSegmentChangeHandler} />}
-      >
+      <HomeLayout onIonSegmentChangeHandler={onIonSegmentChangeHandler}>
         <SkeletonCards />
       </HomeLayout>
     );
   }
 
   // If unable to complete a fetch to scripture API show an error.
-  if (state.verses.loading === 'failed') {
+  if (verses.loading === 'failed') {
     return (
-      <HomeLayout
-        header={<VolumeSegment changeHandler={onIonSegmentChangeHandler} />}
-      >
+      <HomeLayout onIonSegmentChangeHandler={onIonSegmentChangeHandler}>
         <div className="container">
-          <p>{state.verses.error}</p>
+          <p>{verses.error}</p>
         </div>
       </HomeLayout>
     );
   }
 
   // If the user hasn't fetched any verses
-  if (state.verses.data.length === 0) {
+  if (verses.data.length === 0) {
     return (
-      <HomeLayout
-        header={<VolumeSegment changeHandler={onIonSegmentChangeHandler} />}
-      >
+      <HomeLayout onIonSegmentChangeHandler={onIonSegmentChangeHandler}>
         <div className="container">
           <p>Please select a volume of scriptures.</p>
         </div>
@@ -89,15 +112,14 @@ const Home: React.FC = () => {
   // A successfull fetch will end up here. Display the vereses and
   // setup the infinite scroll.
   return (
-    <HomeLayout
-      header={<VolumeSegment changeHandler={onIonSegmentChangeHandler} />}
-    >
-      {state.verses.data.map((verse: any, i: number) => (
+    <HomeLayout onIonSegmentChangeHandler={onIonSegmentChangeHandler}>
+      {verses.data.map((verse: any, i: number) => (
         <VerseCard
           key={`${i}-${verse.verseId}`}
           verse={verse}
-          isBookmarked={isBookmarked(verse.verseId, state.bookmarks.data)}
+          isBookmarked={isBookmarked(verse.verseId, bookmarks.data)}
           onBookmarkDeleteClickHandler={() => onBookmarkClickHandler(verse)}
+          onFavoriteClickHandler={() => onFavoriteClickHandler(verse)}
           isVerseForMenu={false}
         />
       ))}
@@ -115,56 +137,21 @@ const Home: React.FC = () => {
  * Encapsulate the basic page layout here to decrease complexity above.
  */
 interface HomeLayoutProps {
-  header: ReactElement;
+  onIonSegmentChangeHandler: (e: CustomEvent) => void;
 }
 
-const HomeLayout: React.FC<HomeLayoutProps> = ({ header, children }) => (
+const HomeLayout: React.FC<HomeLayoutProps> = ({
+  onIonSegmentChangeHandler,
+  children,
+}) => (
   <IonPage>
     <IonHeader>
-      <IonToolbar>{header}</IonToolbar>
+      <IonToolbar>
+        <VolumeSegment changeHandler={onIonSegmentChangeHandler} />
+      </IonToolbar>
     </IonHeader>
     <IonContent color="secondary">{children}</IonContent>
   </IonPage>
 );
-
-/**
- * Component: VolumeSegment
- * Dedicated component for the row of bottoms along the top
- * that control selection of the Volume.
- */
-interface VolumeSegmentProps {
-  changeHandler: (e: any) => void;
-}
-
-const VolumeSegment: React.FC<VolumeSegmentProps> = ({ changeHandler }) => {
-  const onIonChangeHandler = (e: any) => {
-    changeHandler(e);
-  };
-
-  return (
-    <IonSegment
-      onIonChange={onIonChangeHandler}
-      scrollable={true}
-      swipeGesture={false}
-      color="secondary"
-    >
-      <IonSegmentButton value="1">
-        <IonLabel>OT</IonLabel>
-      </IonSegmentButton>
-      <IonSegmentButton value="2">
-        <IonLabel>NT</IonLabel>
-      </IonSegmentButton>
-      <IonSegmentButton value="3">
-        <IonLabel>BM</IonLabel>
-      </IonSegmentButton>
-      <IonSegmentButton value="4">
-        <IonLabel>DC</IonLabel>
-      </IonSegmentButton>
-      <IonSegmentButton value="5">
-        <IonLabel>PGP</IonLabel>
-      </IonSegmentButton>
-    </IonSegment>
-  );
-};
 
 export default Home;

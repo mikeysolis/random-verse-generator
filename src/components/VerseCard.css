@@ -27,7 +27,7 @@ ion-fab-button {
   margin: 0 0 -32px 0;
   padding: 0;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
   align-items: center;
 }
 
@@ -35,11 +35,13 @@ ion-fab-button {
   padding-bottom: 10px;
 }
 
-.verse-option-button {
+.verse-option-button,
+.verse-favorite-button {
   margin: 0;
 }
 
-.verse-option-icon {
+.verse-option-icon,
+.verse-favorite-icon {
   font-size: 24px;
   color: var(--ion-color-medium);
 }

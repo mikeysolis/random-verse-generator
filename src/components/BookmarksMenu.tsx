@@ -54,6 +54,10 @@ const BookmarksMenu: React.FC<BookmarksMenuProps> = ({
     dispatch(updateBookmarks(verse));
   };
 
+  const onFavoriteClickHandler = (verse: Verse) => {
+    // all the codes go here
+  };
+
   // Render if no bookmarks are set.
   if (!bookmarkState.data || bookmarkState.data.length === 0) {
     return (
@@ -153,6 +157,7 @@ const BookmarksMenu: React.FC<BookmarksMenuProps> = ({
               onBookmarkDeleteClickHandler={() =>
                 onDeleteBookmarkHandler(bookmark)
               }
+              onFavoriteClickHandler={() => onFavoriteClickHandler(bookmark)}
               isVerseForMenu={true}
             />
           ))}

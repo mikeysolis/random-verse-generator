@@ -12,7 +12,7 @@ import {
   IonIcon,
   IonFabButton,
 } from '@ionic/react';
-import { bookmark, trash } from 'ionicons/icons';
+import { bookmark, trash, heart } from 'ionicons/icons';
 
 import './VerseCard.css';
 import { Verse } from '../lib/store/types';
@@ -22,6 +22,7 @@ import { Verse } from '../lib/store/types';
  * verse: the actually verse from the scripture API
  * isBookmarked: whether the verse has been bookmarked
  * onBookmarkDeletedClickHandler: allows for deletion of a bookmark
+ * onFavoriteClickHandler: opens the FavoriteModal
  * isVerseForMenu: if the verse is displayed on the menu, show a trash can icon
  * instead of bookmark icon.
  */
@@ -29,6 +30,7 @@ interface VerseCardProps {
   verse: Verse;
   isBookmarked: boolean | null;
   onBookmarkDeleteClickHandler: (verse: Verse) => void;
+  onFavoriteClickHandler: (verse: Verse) => void;
   isVerseForMenu: boolean;
 }
 
@@ -36,6 +38,7 @@ const VerseCard: React.FC<VerseCardProps> = ({
   verse,
   isBookmarked,
   onBookmarkDeleteClickHandler,
+  onFavoriteClickHandler,
   isVerseForMenu,
 }) => {
   return (
@@ -65,6 +68,14 @@ const VerseCard: React.FC<VerseCardProps> = ({
               icon={isVerseForMenu ? trash : bookmark}
             />
           )}
+        </IonFabButton>
+        <IonFabButton
+          size="small"
+          color="light"
+          className="verse-favorite-button"
+          onClick={() => onFavoriteClickHandler(verse)}
+        >
+          <IonIcon className="verse-favorite-icon" icon={heart} />
         </IonFabButton>
       </div>
     </>
