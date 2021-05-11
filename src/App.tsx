@@ -9,7 +9,7 @@ import {
   IonIcon,
   IonLabel,
 } from '@ionic/react';
-import { book, heart, settings } from 'ionicons/icons';
+import { book, heart, person } from 'ionicons/icons';
 import { IonReactRouter } from '@ionic/react-router';
 
 import { createStorage, get } from './lib/utils/ionicStorage';
@@ -183,7 +183,7 @@ const TabsRouterOutlet: React.FC = () => {
         />
         <Redirect exact from="/" to="/home" />
       </IonRouterOutlet>
-      <IonTabBar slot="bottom">
+      <IonTabBar slot="bottom" color="primary">
         <IonTabButton tab="home" ref={handleTabClick('/home')} href="/home">
           <IonIcon icon={book} />
           <IonLabel>Verses</IonLabel>
@@ -197,8 +197,8 @@ const TabsRouterOutlet: React.FC = () => {
           ref={handleTabClick('/dashboard')}
           href="/dashboard"
         >
-          <IonIcon icon={settings} />
-          <IonLabel>Dashboard</IonLabel>
+          <IonIcon icon={person} />
+          <IonLabel>Account</IonLabel>
         </IonTabButton>
       </IonTabBar>
     </IonTabs>

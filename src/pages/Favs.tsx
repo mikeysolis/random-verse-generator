@@ -4,28 +4,45 @@
  */
 
 import { Suspense } from 'react';
-import { AuthCheck } from 'reactfire';
+import {
+  useFirestore,
+  useFirestoreCollectionData,
+  AuthCheck,
+  useUser,
+} from 'reactfire';
 import {
   IonContent,
   IonPage,
-  IonCard,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardContent,
+  IonList,
+  IonItem,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonItemSliding,
+  IonItemOptions,
+  IonItemOption,
+  IonIcon,
 } from '@ionic/react';
+import { trash } from 'ionicons/icons';
 
+import './Favs.css';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { BasicCard } from '../components/Cards';
 import { SubscribeCheck, SignInWithGoogle } from '../components/Customers';
+import { Verse } from '../lib/store/types';
 
 const Favs: React.FC = () => {
   return (
     <IonPage>
-      <IonContent color="secondary">
+      <IonHeader>
+        <IonToolbar color="primary">
+          <IonTitle>Favorites</IonTitle>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent>
         <Suspense fallback={<LoadingSpinner />}>
           <AuthCheck fallback={<LoggedOut />}>
-            <SubscribeCheck fallback={<UnSubscribed />}>
-              <p>You are subscribed</p>
-            </SubscribeCheck>
+            <LoggedIn />
           </AuthCheck>
         </Suspense>
       </IonContent>
@@ -33,30 +50,79 @@ const Favs: React.FC = () => {
   );
 };
 
+// Show to the user if logged in
+const LoggedIn: React.FC = () => {
+  // Grab the current user
+  const { data: user } = useUser();
+  // Retrieve the users favorites Ref from firebase
+  const userFavoritesRef = useFirestore()
+    .collection('users')
+    .doc(user?.uid)
+    .collection('favorites');
+  // Subscribe to the users Favorites collection
+  const { data: favorites } = useFirestoreCollectionData<Verse>(
+    userFavoritesRef
+  );
+
+  return (
+    <>
+      <SubscribeCheck fallback={<UnSubscribed />}>
+        {favorites.length === 0 ? (
+          <BasicCard title="No Favorite Verses">
+            Once you save a verse as a Favorite it will show up here. Go save a
+            Fave!
+          </BasicCard>
+        ) : (
+          <IonList className="favorites-list" inset={true}>
+            {favorites.map(favorite => (
+              <FavoriteItem key={favorite.verseId}>
+                <div>
+                  <h5>{favorite.verseTitle}</h5>
+                  <p>{favorite.scriptureText}</p>
+                </div>
+              </FavoriteItem>
+            ))}
+          </IonList>
+        )}
+      </SubscribeCheck>
+    </>
+  );
+};
+
 // Show to the user if logged out
 const LoggedOut: React.FC = ({ children }) => {
   return (
-    <div className="container">
-      <IonCard>
-        <IonCardHeader>
-          <IonCardSubtitle>Favorites</IonCardSubtitle>
-          <IonCardContent>
-            Start saving and organizing your favorite verses to the Cloud by
-            signing in with your preferred provider.
-          </IonCardContent>
-        </IonCardHeader>
-        <SignInWithGoogle />
-      </IonCard>
-    </div>
+    <BasicCard title="Login Required" button={<SignInWithGoogle />}>
+      Please login to view your Favorites. A Free Trial or Subscription is
+      required to use this feature.
+    </BasicCard>
   );
 };
 
 // Show to the user if they don't have an active subscription
 const UnSubscribed: React.FC = () => {
   return (
-    <>
-      <p>unsubbed</p>
-    </>
+    <BasicCard title="Subscription Required">
+      It appears your Free Trial or Subscription has expired. To view your
+      Favorites please visit your account page to update your Subscription.
+    </BasicCard>
+  );
+};
+
+// Component that displays in individual favorite item
+const FavoriteItem: React.FC = ({ children }) => {
+  return (
+    <IonItemSliding>
+      <IonItem button={true} detail={false} lines="none" color="secondary">
+        {children}
+      </IonItem>
+      <IonItemOptions>
+        <IonItemOption color="warning">
+          <IonIcon slot="start" icon={trash} />
+          Delete
+        </IonItemOption>
+      </IonItemOptions>
+    </IonItemSliding>
   );
 };
 

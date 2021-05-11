@@ -11,12 +11,12 @@ import {
   IonToolbar,
   IonTitle,
   IonButton,
-  IonText,
 } from '@ionic/react';
 import { AuthCheck } from 'reactfire';
 
 import { fetchFromAPI } from '../lib/utils/helpers';
-import { LoggedIn, LoggedOut, Card } from '../pages/Dashboard';
+import { LoggedIn, LoggedOut } from '../pages/Dashboard';
+import { PrettyCard } from '../components/Cards';
 import LoadingSpinner from './LoadingSpinner';
 
 /**
@@ -76,15 +76,15 @@ export function CheckoutSuccess() {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar color="secondary">
+        <IonToolbar color="primary">
           <IonTitle>Success!</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding-top">
-        <Card title="Subscription Completed">
+        <PrettyCard title="Subscription Completed">
           Thank you for joining our family! You now have access to the entire
           suite of Scripture Study Apps and all available features!
-        </Card>
+        </PrettyCard>
         <Suspense fallback={<LoadingSpinner />}>
           <AuthCheck fallback={<LoggedOut />}>
             <LoggedIn />
@@ -104,16 +104,16 @@ export function CheckoutFailed() {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar color="secondary">
+        <IonToolbar color="primary">
           <IonTitle>Canceled</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding-top">
-        <Card title="Subscription Signup Canceled">
+        <PrettyCard title="Subscription Signup Canceled">
           It looks like you may have canceled the subscription process. That's
           okay, we understand and are looking forward to you joining our family
           in the future!
-        </Card>
+        </PrettyCard>
         <Suspense fallback={<LoadingSpinner />}>
           <AuthCheck fallback={<LoggedOut />}>
             <LoggedIn />

@@ -43,7 +43,7 @@ const VerseCard: React.FC<VerseCardProps> = ({
 }) => {
   return (
     <>
-      <IonCard color="primary">
+      <IonCard color="secondary">
         <IonCardHeader>
           <IonCardTitle className="home-ion-card-title">
             {verse.verseTitle}
@@ -56,7 +56,7 @@ const VerseCard: React.FC<VerseCardProps> = ({
       <div className="card-button-container">
         <IonFabButton
           size="small"
-          color="light"
+          color="medium"
           className="verse-option-button"
           onClick={() => onBookmarkDeleteClickHandler(verse)}
         >
@@ -71,7 +71,7 @@ const VerseCard: React.FC<VerseCardProps> = ({
         </IonFabButton>
         <IonFabButton
           size="small"
-          color="light"
+          color="medium"
           className="verse-favorite-button"
           onClick={() => onFavoriteClickHandler(verse)}
         >

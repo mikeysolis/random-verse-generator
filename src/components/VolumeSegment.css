@@ -1,0 +1,21 @@
+ion-segment {
+  /* margin: 0; */
+  border-radius: 0;
+  width: 100%;
+}
+
+ion-segment-button {
+  font-size: 0.9rem;
+  --border-radius: 0;
+  /* --indicator-box-shadow: 0 0 2px rgba(0, 0, 0, 0.16); */
+}
+
+.ios ion-segment-button {
+  --margin-top: 6px;
+  --margin-bottom: 6px;
+}
+
+/* .md ion-segment-button {
+  --margin-top: 6px;
+  --margin-bottom: 6px;
+} */

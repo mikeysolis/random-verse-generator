@@ -14,23 +14,29 @@ import {
   IonToolbar,
   useIonModal,
 } from '@ionic/react';
+import { useUser } from 'reactfire';
 
-import './Home.css';
 import { useAppSelector, useAppDispatch } from '../lib/store/hooks';
 import { clear, concatVerses } from '../lib/store/versesSlice';
 import { updateBookmarks } from '../lib/store/bookmarksSlice';
 import { isBookmarked } from '../lib/utils/helpers';
 import { Verse } from '../lib/store/types';
 import SkeletonCards from '../components/SkeletonCards';
+import { BasicCard } from '../components/Cards';
+import AlertPopup from '../components/AlertPopup';
 import VerseCard from '../components/VerseCard';
 import FavoriteModal from '../components/FavoriteModal';
 import VolumeSegment from '../components/VolumeSegment';
 
 const Home: React.FC = () => {
-  // Grab the current verses and bookmarks state from redux
-  const { verses, bookmarks } = useAppSelector(state => state);
   // Grab the apps dispatch method for handling state
   const dispatch = useAppDispatch();
+  // Grab the current user
+  const { data: user } = useUser();
+  // State to track whether to show the logged in alert
+  const [loggedInAlert, setLoggedInAlert] = useState<boolean>(false);
+  // Grab the current verses and bookmarks state from redux
+  const { verses, bookmarks } = useAppSelector(state => state);
   // Track the current VolumeID for the row of buttons at the top of the display
   const [volumeId, setVolumeId] = useState<string>('1');
   // Loading state to show or hide the skeleton text
@@ -53,6 +59,7 @@ const Home: React.FC = () => {
   const [presentFavoriteModal, dismissFavoriteModal] = useIonModal(
     FavoriteModal,
     {
+      user,
       verse: favoriteVerse,
       onDismiss: handleFavoriteModalDismiss,
     }
@@ -75,7 +82,14 @@ const Home: React.FC = () => {
   // Run when the user taps the Favorites button for the verse
   const onFavoriteClickHandler = (verse: Verse) => {
     setFavoriteVerse(verse);
-    presentFavoriteModal({ cssClass: 'favorite-modal' });
+
+    // If the user is logged in present the modal, if not
+    // present an alert.
+    if (user) {
+      presentFavoriteModal({ cssClass: 'favorite-modal' });
+    } else {
+      setLoggedInAlert(true);
+    }
   };
 
   // If verses are loading from Scripture API show skeleton cards.
@@ -91,9 +105,7 @@ const Home: React.FC = () => {
   if (verses.loading === 'failed') {
     return (
       <HomeLayout onIonSegmentChangeHandler={onIonSegmentChangeHandler}>
-        <div className="container">
-          <p>{verses.error}</p>
-        </div>
+        <BasicCard title="Error">{verses.error}</BasicCard>
       </HomeLayout>
     );
   }
@@ -102,9 +114,9 @@ const Home: React.FC = () => {
   if (verses.data.length === 0) {
     return (
       <HomeLayout onIonSegmentChangeHandler={onIonSegmentChangeHandler}>
-        <div className="container">
-          <p>Please select a volume of scriptures.</p>
-        </div>
+        <BasicCard title="Select a Volume">
+          Please select a volume of scripture from the menu above.
+        </BasicCard>
       </HomeLayout>
     );
   }
@@ -113,6 +125,14 @@ const Home: React.FC = () => {
   // setup the infinite scroll.
   return (
     <HomeLayout onIonSegmentChangeHandler={onIonSegmentChangeHandler}>
+      <AlertPopup
+        showAlert={loggedInAlert}
+        setShowAlert={setLoggedInAlert}
+        header="Not Logged In"
+        message="The Favorites feature saves your favorite verses to the cloud 
+        and requires users to be logged in. For now we recommend Bookmarking the verse, 
+        then you can easily find it later if you would still like to save it as a Favorite."
+      />
       {verses.data.map((verse: any, i: number) => (
         <VerseCard
           key={`${i}-${verse.verseId}`}
@@ -146,11 +166,11 @@ const HomeLayout: React.FC<HomeLayoutProps> = ({
 }) => (
   <IonPage>
     <IonHeader>
-      <IonToolbar>
+      <IonToolbar color="primary">
         <VolumeSegment changeHandler={onIonSegmentChangeHandler} />
       </IonToolbar>
     </IonHeader>
-    <IonContent color="secondary">{children}</IonContent>
+    <IonContent>{children}</IonContent>
   </IonPage>
 );
 

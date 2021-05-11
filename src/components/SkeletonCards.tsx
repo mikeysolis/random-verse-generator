@@ -29,7 +29,7 @@ const SkeletonCards: React.FC = () => (
 // A single card
 const Card: React.FC = () => (
   <>
-    <IonCard className="custom-skeleton verse-card" color="primary">
+    <IonCard className="custom-skeleton verse-card">
       <IonCardHeader>
         <IonCardTitle className="skeleton-verse-title">
           <IonSkeletonText animated />

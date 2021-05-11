@@ -3,7 +3,7 @@ import { IonApp, IonContent, IonSpinner } from '@ionic/react';
 const LoadingApp: React.FC = () => {
   return (
     <IonApp>
-      <IonContent color="secondary">
+      <IonContent>
         <div className="container">
           <IonSpinner />
         </div>

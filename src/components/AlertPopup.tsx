@@ -11,7 +11,7 @@ import './AlertPopup.css';
 interface AlertProps {
   showAlert: boolean;
   setShowAlert: React.Dispatch<React.SetStateAction<boolean>>;
-  actionHandler: () => void;
+  actionHandler?: () => void;
   header: string;
   message: string;
 }
@@ -42,7 +42,7 @@ const AlertPopup: React.FC<AlertProps> = ({
           text: 'OK',
           handler: () => {
             setShowAlert(false);
-            actionHandler();
+            if (actionHandler) actionHandler();
           },
         },
       ]}

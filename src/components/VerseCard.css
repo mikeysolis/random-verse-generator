@@ -43,9 +43,9 @@ ion-fab-button {
 .verse-option-icon,
 .verse-favorite-icon {
   font-size: 24px;
-  color: var(--ion-color-medium);
+  color: var(--ion-color-light);
 }
 
 .active {
-  color: var(--ion-color-dark);
+  color: var(--ion-color-warning);
 }
