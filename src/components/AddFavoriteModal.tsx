@@ -18,13 +18,14 @@ import {
   IonTextarea,
   IonTitle,
   IonToolbar,
+  useIonToast,
 } from '@ionic/react';
 import { close } from 'ionicons/icons';
 import firebase from 'firebase/app';
-import { db } from '../lib/firebase/config';
+import { addFavorite } from '../lib/firebase/db';
 
-import './FavoriteModal.css';
-import { Verse } from '../lib/store/types';
+import './AddFavoriteModal.css';
+import { Verse, Favorite } from '../lib/store/types';
 
 /**
  * Main display component, recieves neccessary props for the modal to function.
@@ -37,19 +38,13 @@ interface FavoriteModalProps {
   onDismiss: () => void;
 }
 
-type Favorite = {
-  verseTitle: string;
-  verseId: number;
-  volumeTitle: string;
-  scriptureText: string;
-  note?: string;
-};
-
 const FavoriteModal: React.FC<FavoriteModalProps> = ({
   user,
   verse,
   onDismiss,
 }) => {
+  // Set up the IonToast to alert user if favorite has been successfully added
+  const [presentToast, dismissToast] = useIonToast();
   // Setup the state for handling the Note textfield
   const [noteText, setNoteText] = useState<string>('');
 
@@ -67,12 +62,13 @@ const FavoriteModal: React.FC<FavoriteModalProps> = ({
 
     // Add verse to firebase
     try {
-      await db
-        .collection('users')
-        .doc(user.uid)
-        .collection('favorites')
-        .doc(verse.verseTitle)
-        .set(favorite, { merge: true });
+      await addFavorite(user.uid, verse.verseTitle, favorite);
+      presentToast({
+        buttons: [{ text: 'close', handler: () => dismissToast() }],
+        message: 'Favorite successfully added.',
+        duration: 2000,
+        color: 'dark',
+      });
     } catch (error) {
       console.log(error);
     }

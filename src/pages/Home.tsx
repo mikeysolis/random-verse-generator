@@ -25,7 +25,7 @@ import SkeletonCards from '../components/SkeletonCards';
 import { BasicCard } from '../components/Cards';
 import AlertPopup from '../components/AlertPopup';
 import VerseCard from '../components/VerseCard';
-import FavoriteModal from '../components/FavoriteModal';
+import FavoriteModal from '../components/AddFavoriteModal';
 import VolumeSegment from '../components/VolumeSegment';
 
 const Home: React.FC = () => {

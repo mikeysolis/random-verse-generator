@@ -17,7 +17,7 @@ import { useAppSelector, useAppDispatch } from './lib/store/hooks';
 import { loadBookmarks, clearBookmarks } from './lib/store/bookmarksSlice';
 import Home from './pages/Home';
 import Onboarding from './pages/Onboarding';
-import Favs from './pages/Favs';
+import Favorites from './pages/Favorites';
 import Dashboard from './pages/Dashboard';
 import { CheckoutSuccess, CheckoutFailed } from './components/Checkout';
 import BookmarksMenu from './components/BookmarksMenu';
@@ -169,7 +169,7 @@ const TabsRouterOutlet: React.FC = () => {
     <IonTabs>
       <IonRouterOutlet id="main">
         <Route exact path="/:tab(home)" component={Home} />
-        <Route exact path="/:tab(favs)" component={Favs} />
+        <Route exact path="/:tab(favorites)" component={Favorites} />
         <Route exact path="/:tab(dashboard)" component={Dashboard} />
         <Route
           exact
@@ -188,9 +188,13 @@ const TabsRouterOutlet: React.FC = () => {
           <IonIcon icon={book} />
           <IonLabel>Verses</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="favs" ref={handleTabClick('/favs')} href="/favs">
+        <IonTabButton
+          tab="favorites"
+          ref={handleTabClick('/favorites')}
+          href="/favorites"
+        >
           <IonIcon icon={heart} />
-          <IonLabel>Favs</IonLabel>
+          <IonLabel>Favorites</IonLabel>
         </IonTabButton>
         <IonTabButton
           tab="dashboard"

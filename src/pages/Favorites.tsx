@@ -26,7 +26,7 @@ import {
 } from '@ionic/react';
 import { trash } from 'ionicons/icons';
 
-import './Favs.css';
+import './Favorites.css';
 import { deleteFavorite } from '../lib/firebase/db';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { BasicCard } from '../components/Cards';

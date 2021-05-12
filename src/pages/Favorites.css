@@ -1,0 +1,38 @@
+.favorites-list {
+  background-color: transparent;
+}
+
+.favorites-list.list-inset {
+  margin: 8px;
+}
+
+.favorites-list.list-md {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.favorites-list ion-item {
+  --background: var(--ion-color-light);
+  --inner-padding-end: 20px;
+  /* --detail-icon-color: var(--ion-color-dark);
+  --detail-icon-font-size: 2rem;
+  --detail-icon-opacity: 0.5; */
+}
+
+/* .favorites-list div {
+  margin-right: 8px;
+} */
+
+.favorites-list ion-item h5 {
+  font-weight: 400;
+  font-size: 1.1rem;
+  margin-top: 20px;
+}
+
+.favorites-list ion-item p {
+  text-align: justify;
+  line-height: 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 300;
+  margin-top: 12px;
+}

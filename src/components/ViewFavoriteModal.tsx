@@ -1,0 +1,1 @@
+import './ViewFavoriteModal.css';
