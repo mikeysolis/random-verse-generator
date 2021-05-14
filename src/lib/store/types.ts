@@ -12,3 +12,9 @@ export type Favorite = {
   scriptureText: string;
   note?: string;
 };
+
+export type Category = {
+  id?: string;
+  displayName?: string;
+  count?: number;
+};

@@ -4,6 +4,7 @@ import logger from 'redux-logger';
 import versesReducer from './versesSlice';
 import swReducer from './swSlice';
 import bookmarksReducer from './bookmarksSlice';
+import categoriesReducer from './categoriesSlice';
 import createApolloClient from '../apollo/apolloClient';
 
 // Grab the Apollo client here. We are going to pass it to
@@ -25,6 +26,7 @@ const store = configureStore({
     verses: versesReducer,
     sw: swReducer,
     bookmarks: bookmarksReducer,
+    categories: categoriesReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
