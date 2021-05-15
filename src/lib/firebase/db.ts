@@ -23,8 +23,12 @@ export const addFavorite = (
     .set(favorite, { merge: true });
 };
 
-export const addCategory = (uid: string, category: Category) => {
-  return db
+export const loadFavorites = (uid: string) => {
+  return db.collection('users').doc(uid).collection('favorites').get();
+};
+
+export const addCategory = async (uid: string, category: Category) => {
+  return await db
     .collection('users')
     .doc(uid)
     .collection('categories')
@@ -42,11 +46,5 @@ export const deleteCategory = (uid: string, id: string) => {
 };
 
 export const loadCategories = (uid: string) => {
-  // Setup the document ref for firebase
-  const categoriesRef = db
-    .collection('users')
-    .doc(uid)
-    .collection('categories');
-
-  return categoriesRef.get();
+  return db.collection('users').doc(uid).collection('categories').get();
 };

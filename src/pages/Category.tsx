@@ -3,7 +3,7 @@
  * scriptures.
  */
 
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import {
   useFirestore,
   useFirestoreCollectionData,
@@ -23,28 +23,45 @@ import {
   IonItemOption,
   IonIcon,
   useIonToast,
+  IonText,
+  IonButtons,
+  IonBackButton,
 } from '@ionic/react';
-import { trash } from 'ionicons/icons';
+import { filter, trash } from 'ionicons/icons';
 
-import './Favs.css';
+import './Category.css';
 import { deleteFavorite } from '../lib/firebase/db';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { BasicCard } from '../components/Cards';
 import { SubscribeCheck, SignInWithGoogle } from '../components/Customers';
-import { Verse } from '../lib/store/types';
+import { useAppSelector } from '../lib/store/hooks';
+import { RouteComponentProps } from 'react-router';
+import { Favorite } from '../lib/store/types';
 
-const Favs: React.FC = () => {
+interface CategoryProps
+  extends RouteComponentProps<{
+    id: string;
+  }> {}
+
+const Category: React.FC<CategoryProps> = ({ match }) => {
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar color="primary">
-          <IonTitle>Favorites</IonTitle>
+          <IonButtons slot="start">
+            <IonBackButton />
+          </IonButtons>
+          <IonTitle>
+            <IonText className="ion-text-capitalize">
+              {match.params.id.replace(/-/g, ' ')}
+            </IonText>
+          </IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
         <Suspense fallback={<LoadingSpinner />}>
           <AuthCheck fallback={<LoggedOut />}>
-            <LoggedIn />
+            <LoggedIn id={match.params.id} />
           </AuthCheck>
         </Suspense>
       </IonContent>
@@ -53,19 +70,23 @@ const Favs: React.FC = () => {
 };
 
 // Show to the user if logged in
-const LoggedIn: React.FC = () => {
+const LoggedIn: React.FC<{ id: string }> = ({ id }) => {
   // Set up the IonToast to alert user if favorite has been successfully deleted
   const [presentToast, dismissToast] = useIonToast();
   // Grab the current user
   const { data: user } = useUser();
-  // Retrieve the users favorites Ref from firebase
-  const userFavoritesRef = useFirestore()
-    .collection('users')
-    .doc(user?.uid)
-    .collection('favorites');
-  // Subscribe to the users Favorites collection
-  const { data: favorites } =
-    useFirestoreCollectionData<Verse>(userFavoritesRef);
+  // Grab the current categories state from redux
+  const { data: favorites } = useAppSelector(state => state.favorites);
+  const [favsByCategory, setFavsByCategory] = useState<Favorite[]>([]);
+
+  // const filteredFavorites = (id: string): Favorite[] => {
+  //   return favorites.filter(fav => fav.categoryId === id);
+  // };
+
+  useEffect(() => {
+    const filteredFavorites = favorites.filter(fav => fav.categoryId === id);
+    setFavsByCategory(filteredFavorites);
+  }, [favorites, id]);
 
   const deleteFavoriteHandler = async (verseTitle: string) => {
     try {
@@ -90,10 +111,10 @@ const LoggedIn: React.FC = () => {
         </BasicCard>
       ) : (
         <IonList className="favorites-list" inset={true}>
-          {favorites.map(({ verseId, verseTitle, scriptureText }) => (
+          {favsByCategory.map(({ verseId, verseTitle, scriptureText }) => (
             <FavoriteItem
               key={verseId}
-              verseTitle={verseTitle}
+              verseTitle={verseTitle!}
               deleteFavoriteHandler={deleteFavoriteHandler}
             >
               <div>
@@ -160,4 +181,4 @@ const FavoriteItem: React.FC<FavoriteItemProps> = ({
   );
 };
 
-export default Favs;
+export default Category;

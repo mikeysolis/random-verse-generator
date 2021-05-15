@@ -18,6 +18,7 @@ import { loadBookmarks, clearBookmarks } from './lib/store/bookmarksSlice';
 import Home from './pages/Home';
 import Onboarding from './pages/Onboarding';
 import Favorites from './pages/Favorites';
+import Category from './pages/Category';
 import Dashboard from './pages/Dashboard';
 import { CheckoutSuccess, CheckoutFailed } from './components/Checkout';
 import BookmarksMenu from './components/BookmarksMenu';
@@ -170,6 +171,7 @@ const TabsRouterOutlet: React.FC = () => {
       <IonRouterOutlet id="main">
         <Route exact path="/:tab(home)" component={Home} />
         <Route exact path="/:tab(favorites)" component={Favorites} />
+        <Route exact path="/:tab(favorites)/:id" component={Category} />
         <Route exact path="/:tab(dashboard)" component={Dashboard} />
         <Route
           exact

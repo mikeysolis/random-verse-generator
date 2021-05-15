@@ -3,7 +3,7 @@
  * scriptures.
  */
 
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { AuthCheck, useUser } from 'reactfire';
 import {
   IonContent,
@@ -19,12 +19,22 @@ import {
   IonItemOptions,
   IonItemOption,
   IonIcon,
+  IonInput,
+  IonButton,
+  IonText,
+  useIonToast,
+  IonBadge,
 } from '@ionic/react';
-import { trash } from 'ionicons/icons';
+import { trash, add } from 'ionicons/icons';
 
 import './Favorites.css';
 import { useAppSelector, useAppDispatch } from '../lib/store/hooks';
-import { loadCategories, deleteCategory } from '../lib/store/categoriesSlice';
+import {
+  loadCategories,
+  deleteCategory,
+  addCategory,
+} from '../lib/store/categoriesSlice';
+import { loadFavorites } from '../lib/store/favoritesSlice';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { BasicCard } from '../components/Cards';
 import { SubscribeCheck, SignInWithGoogle } from '../components/Customers';
@@ -52,6 +62,10 @@ const Favs: React.FC = () => {
 
 // Show to the user if logged in
 const LoggedIn: React.FC = () => {
+  // Set up the IonToast to alert user if favorite has been successfully deleted
+  const [presentToast, dismissToast] = useIonToast();
+  // Setup state for the add category input
+  const [inputValue, setInputValue] = useState<string>('');
   // Grab the apps dispatch method for handling state
   const dispatch = useAppDispatch();
   // Grab the current categories state from redux
@@ -61,22 +75,74 @@ const LoggedIn: React.FC = () => {
 
   useEffect(() => {
     dispatch(loadCategories(user.uid));
+    dispatch(loadFavorites(user.uid));
   }, [dispatch, user.uid]);
 
   const categoryDeleteHandler = (category: Category) => {
     dispatch(deleteCategory({ uid: user.uid, category }));
+    presentToast({
+      buttons: [{ text: 'close', handler: () => dismissToast() }],
+      message: 'Category successfully deleted.',
+      duration: 2000,
+      color: 'dark',
+    });
+  };
+
+  const addCategoryHandler = () => {
+    // Replace whitespace with dashes and convert id to lowercase
+    const id = inputValue.replace(/\s+/g, '-').toLowerCase();
+
+    // TODO: needs to add some input validation
+    // Setup the object to be dispatched
+    const category = {
+      uid: user.uid,
+      category: {
+        id,
+        name: inputValue,
+        count: 0,
+      },
+    };
+
+    dispatch(addCategory(category));
+
+    setInputValue('');
+
+    presentToast({
+      buttons: [{ text: 'close', handler: () => dismissToast() }],
+      message: 'Category successfully added.',
+      duration: 2000,
+      color: 'dark',
+    });
   };
 
   return (
     <SubscribeCheck fallback={<UnSubscribed />}>
-      <IonList className="favorites-list" inset={true}>
+      <div className="add-category-input">
+        <IonInput
+          enterkeyhint="done"
+          inputmode="text"
+          maxlength={30}
+          minlength={3}
+          required={true}
+          type="text"
+          value={inputValue}
+          onIonInput={(e: any) => setInputValue(e.target.value)}
+          autocorrect="on"
+          color="primary"
+          placeholder="Add a new category"
+        ></IonInput>
+        <IonButton fill="solid" color="warning" onClick={addCategoryHandler}>
+          <IonIcon icon={add} size="large" />
+        </IonButton>
+      </div>
+      <IonList className="favorites-list" lines="full">
         <IonListHeader>
-          <IonLabel>Categories</IonLabel>
+          <IonLabel>My Categories</IonLabel>
         </IonListHeader>
         {categories.data.length === 0 && <IonItem>No categories yet</IonItem>}
         {categories.data.map(category => (
           <CategoryItem
-            key={category.displayName}
+            key={category.name}
             category={category}
             deleteHandler={categoryDeleteHandler}
           />
@@ -121,8 +187,17 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
 
   return (
     <IonItemSliding>
-      <IonItem button={true} detail={false} color="secondary">
-        {category.displayName}
+      <IonItem
+        button={true}
+        detail={true}
+        disabled={category.count! < 1}
+        color="secondary"
+        routerLink={`/favorites/${category.id}`}
+      >
+        <IonText className="ion-text-capitalize">{category.name}</IonText>
+        <IonBadge slot="end" color="primary">
+          {category.count}
+        </IonBadge>
       </IonItem>
       <IonItemOptions>
         <IonItemOption

@@ -10,7 +10,7 @@ import {
   loadCategories as loadCategoriesFromFB,
 } from '../firebase/db';
 import { RootState } from './store';
-import { Category } from './types';
+import { Category, FirebaseError } from './types';
 
 interface CategoriesState {
   data: Category[];
@@ -24,11 +24,6 @@ const initialState: CategoriesState = {
   loading: 'idle',
   error: undefined,
 };
-
-// Required to use rejectWithValue to detect Apollo errors
-interface FirebaseError {
-  errorMessage: string;
-}
 
 /**
  * Async Thunk: loadCategories
@@ -131,7 +126,13 @@ export const categoriesSlice = createSlice({
     });
     // Actions for addCategory
     builder.addCase(addCategory.fulfilled, (state, action) => {
-      state.data.push(action.payload);
+      // Check if the new category already exists in state, if so don't re-add it.
+      const exists = state.data.some(
+        category => category.id === action.payload.id
+      );
+      if (!exists) {
+        state.data.push(action.payload);
+      }
       state.loading = 'succeeded';
     });
     builder.addCase(addCategory.rejected, (state, action) => {
@@ -145,5 +146,5 @@ export const categoriesSlice = createSlice({
 });
 
 // export const {  } = categoriesSlice.actions;
-export const selectVerses = (state: RootState) => state.categories.data;
+export const selectCategories = (state: RootState) => state.categories.data;
 export default categoriesSlice.reducer;
