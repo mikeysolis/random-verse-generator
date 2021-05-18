@@ -11,7 +11,7 @@ import './AlertPopup.css';
 interface AlertProps {
   showAlert: boolean;
   setShowAlert: React.Dispatch<React.SetStateAction<boolean>>;
-  actionHandler?: () => void;
+  actionHandler?: (event?: any) => void;
   header: string;
   message: string;
 }

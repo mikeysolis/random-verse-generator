@@ -2,13 +2,32 @@ import firebase from 'firebase/app';
 import { db } from './config';
 import { Category, Favorite } from '../store/types';
 
-export const deleteFavorite = (uid: string, verseTitle: string) => {
-  return db
+export const deleteFavorite = (uid: string, favorite: Favorite) => {
+  // Deleting requires two steps, first delete the favorite, then decrement
+  // it's category by 1.
+
+  // Set up the firestore batch
+  const batch = db.batch();
+
+  // First delete the Favorite
+  const favoriteRef = db
     .collection('users')
     .doc(uid)
     .collection('favorites')
-    .doc(verseTitle)
-    .delete();
+    .doc(favorite.verseTitle);
+  batch.delete(favoriteRef);
+
+  // Second decrement the category
+  const categoryRef = db
+    .collection('users')
+    .doc(uid)
+    .collection('categories')
+    .doc(favorite.categoryId);
+  batch.update(categoryRef, {
+    count: firebase.firestore.FieldValue.increment(-1),
+  });
+
+  return batch.commit();
 };
 
 export const addFavorite = (
@@ -25,7 +44,7 @@ export const addFavorite = (
     .doc(uid)
     .collection('favorites')
     .doc(verseTitle);
-  batch.set(favoriteRef, favorite);
+  batch.set(favoriteRef, favorite, { merge: true });
 
   // Second, increment the category by 1
   const categoryRef = db
@@ -36,6 +55,58 @@ export const addFavorite = (
   batch.update(categoryRef, {
     count: firebase.firestore.FieldValue.increment(1),
   });
+
+  return batch.commit();
+};
+
+export const updateFavorite = async (
+  uid: string,
+  verseTitle: string,
+  favorite: Favorite
+) => {
+  // Update is different from adding. When updating I need to first
+  // decrement the old category, the update the favorite, then increment
+  // the new category.
+  const oldCategoryRef = db
+    .collection('users')
+    .doc(uid)
+    .collection('favorites')
+    .doc(verseTitle);
+  const oldCategorySnapshot = await oldCategoryRef.get();
+  const categoryId = oldCategorySnapshot.get('categoryId');
+
+  // Set up the batch
+  const batch = db.batch();
+
+  // First update the favorite
+  const favoriteRef = db
+    .collection('users')
+    .doc(uid)
+    .collection('favorites')
+    .doc(verseTitle);
+  batch.set(favoriteRef, favorite, { merge: true });
+
+  // Second, if the category has changed
+  if (categoryId !== favorite.categoryId) {
+    // Increment the new category by 1
+    const newCategoryRef = db
+      .collection('users')
+      .doc(uid)
+      .collection('categories')
+      .doc(favorite.categoryId);
+    batch.update(newCategoryRef, {
+      count: firebase.firestore.FieldValue.increment(1),
+    });
+    // Decrement the old category by 1
+    const oldCategoryRef = db
+      .collection('users')
+      .doc(uid)
+      .collection('categories')
+      .doc(categoryId);
+    batch.update(oldCategoryRef, {
+      count: firebase.firestore.FieldValue.increment(-1),
+    });
+  }
 
   return batch.commit();
 };

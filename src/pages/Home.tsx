@@ -14,12 +14,7 @@ import {
   IonToolbar,
   useIonModal,
 } from '@ionic/react';
-import {
-  AuthCheck,
-  useFirestoreCollectionData,
-  useUser,
-  useFirestore,
-} from 'reactfire';
+import { useFirestoreCollectionData, useUser, useFirestore } from 'reactfire';
 
 import { useAppSelector, useAppDispatch } from '../lib/store/hooks';
 import { clear, concatVerses } from '../lib/store/versesSlice';

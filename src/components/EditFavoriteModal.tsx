@@ -1,7 +1,7 @@
 /**
- * Component: FavoriteModal
+ * Component: EditFavoriteModal
  * Dedicated component for the modal window that pops up
- * when the user presses the Favorites button on a verse
+ * when the user presses the Edit Favorite button
  */
 
 import React, { useState } from 'react';
@@ -24,26 +24,26 @@ import {
 } from '@ionic/react';
 import { close } from 'ionicons/icons';
 import firebase from 'firebase/app';
-import { addFavorite } from '../lib/firebase/db';
+import { updateFavorite } from '../lib/firebase/db';
 
 import './AddFavoriteModal.css';
-import { Verse, Favorite, Category } from '../lib/store/types';
+import { Favorite, Category } from '../lib/store/types';
 
 /**
  * Main display component, recieves neccessary props for the modal to function.
  * ie. the current user if exists, the verse to add and the handlers, one to handle
  * dismissing the modal and the second to add the verse to firebase.
  */
-interface FavoriteModalProps {
+interface EditFavoriteModalProps {
   user: firebase.User;
-  verse: Verse;
+  favorite: Favorite;
   categories: Category[];
   onDismiss: () => void;
 }
 
-const FavoriteModal: React.FC<FavoriteModalProps> = ({
+const EditFavoriteModal: React.FC<EditFavoriteModalProps> = ({
   user,
-  verse,
+  favorite,
   categories,
   onDismiss,
 }) => {
@@ -51,7 +51,7 @@ const FavoriteModal: React.FC<FavoriteModalProps> = ({
     <>
       <IonHeader>
         <IonToolbar color="primary">
-          <IonTitle>Add Favorite</IonTitle>
+          <IonTitle>Edit Favorite</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={() => onDismiss()}>
               <IonIcon size="large" icon={close} />
@@ -63,7 +63,7 @@ const FavoriteModal: React.FC<FavoriteModalProps> = ({
         {user ? (
           <LoggedIn
             user={user}
-            verse={verse}
+            favorite={favorite}
             categories={categories}
             onDismiss={onDismiss}
           />
@@ -77,38 +77,40 @@ const FavoriteModal: React.FC<FavoriteModalProps> = ({
 
 // Content to display if the user is logged in
 
-const LoggedIn: React.FC<FavoriteModalProps> = ({
+const LoggedIn: React.FC<EditFavoriteModalProps> = ({
   user,
-  verse,
+  favorite,
   categories,
   onDismiss,
 }) => {
   // Set up the IonToast to alert user if favorite has been successfully added
   const [presentToast, dismissToast] = useIonToast();
   // Setup the state for handling the Note textfield
-  const [noteText, setNoteText] = useState<string>('');
+  const [noteText, setNoteText] = useState<string>(favorite.note || '');
   // State for handling the Category select input
-  const [categoryId, setCategoryId] = useState<string>('uncategorized');
+  const [categoryId, setCategoryId] = useState<string>(
+    favorite.categoryId || 'uncategorized'
+  );
 
   // Handler for adding the verse to firebase
-  const onClickAddFavoriteHandler = async () => {
+  const onClickUpdateFavoriteHandler = async () => {
     // Create favorites object
-    const favorite: Favorite = {
-      verseTitle: verse.verseTitle,
-      verseId: verse.verseId,
-      volumeTitle: verse.volumeTitle,
-      scriptureText: verse.scriptureText,
+    const newFavorite: Favorite = {
+      verseTitle: favorite.verseTitle,
+      verseId: favorite.verseId,
+      volumeTitle: favorite.volumeTitle,
+      scriptureText: favorite.scriptureText,
       categoryId,
     };
 
-    if (noteText !== '') favorite.note = noteText;
+    if (noteText !== '') newFavorite.note = noteText;
 
     // Add verse to firebase
     try {
-      await addFavorite(user.uid, verse.verseTitle, favorite);
+      await updateFavorite(user.uid, favorite.verseTitle!, newFavorite);
       presentToast({
         buttons: [{ text: 'close', handler: () => dismissToast() }],
-        message: 'Favorite successfully added.',
+        message: 'Favorite successfully updated.',
         duration: 2000,
         color: 'dark',
       });
@@ -123,11 +125,11 @@ const LoggedIn: React.FC<FavoriteModalProps> = ({
     <>
       <Card title="Selected Verse">
         <IonText>
-          <h2 className="ion-padding-bottom">{verse.verseTitle}</h2>
+          <h2 className="ion-padding-bottom">{favorite.verseTitle}</h2>
         </IonText>
         <IonText>
           <p>
-            <TruncateVerse verse={verse} />
+            <TruncateVerse favorite={favorite} />
           </p>
         </IonText>
       </Card>
@@ -179,9 +181,9 @@ const LoggedIn: React.FC<FavoriteModalProps> = ({
           className="ion-text-uppercase ion-margin-bottom"
           color="warning"
           expand="full"
-          onClick={onClickAddFavoriteHandler}
+          onClick={onClickUpdateFavoriteHandler}
         >
-          Add Favorite
+          Update Favorite
         </IonButton>
       </IonCard>
     </>
@@ -215,13 +217,13 @@ const LoggedOut = () => {
 
 // Component to determine if the verse string has more than 150 characters,
 // if so truncate it and add a 'reveal entire verse' toggle.
-const TruncateVerse: React.FC<{ verse: Verse }> = ({ verse }) => {
+const TruncateVerse: React.FC<{ favorite: Favorite }> = ({ favorite }) => {
   const [isRevealed, setIsRevealed] = useState<boolean>(false);
 
-  if (verse.scriptureText.length > 150) {
+  if (favorite.scriptureText!.length > 150) {
     return isRevealed ? (
       <>
-        {verse.scriptureText}
+        {favorite.scriptureText}
         <br />
         <button onClick={() => setIsRevealed(!isRevealed)}>
           hide full verse
@@ -229,7 +231,7 @@ const TruncateVerse: React.FC<{ verse: Verse }> = ({ verse }) => {
       </>
     ) : (
       <>
-        {verse.scriptureText.substring(0, 150)} ... <br />
+        {favorite.scriptureText!.substring(0, 150)} ... <br />
         <button onClick={() => setIsRevealed(!isRevealed)}>
           reveal full verse
         </button>
@@ -237,7 +239,7 @@ const TruncateVerse: React.FC<{ verse: Verse }> = ({ verse }) => {
     );
   }
 
-  return <>{verse.scriptureText}</>;
+  return <>{favorite.scriptureText}</>;
 };
 
 const Card: React.FC<{ title: string }> = ({ title, children }) => {
@@ -251,4 +253,4 @@ const Card: React.FC<{ title: string }> = ({ title, children }) => {
   );
 };
 
-export default FavoriteModal;
+export default EditFavoriteModal;

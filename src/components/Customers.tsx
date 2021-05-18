@@ -48,7 +48,28 @@ export const SignInWithGoogle: React.FC = () => {
     );
 
     const { uid, email } = credential.user!;
-    firestore.collection('users').doc(uid).set({ email }, { merge: true });
+
+    const batch = firestore.batch();
+
+    const userRef = firestore.collection('users').doc(uid);
+    batch.set(userRef, { email }, { merge: true });
+
+    const categoryRef = firestore
+      .collection('users')
+      .doc(uid)
+      .collection('categories')
+      .doc('uncategorized');
+    batch.set(
+      categoryRef,
+      {
+        id: 'uncategorized',
+        name: 'uncategorized',
+        count: 0,
+      },
+      { merge: true }
+    );
+
+    await batch.commit();
   };
 
   return <button onClick={signIn} className="google-login-button" />;
