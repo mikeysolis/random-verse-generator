@@ -94,7 +94,7 @@ const Home: React.FC = () => {
     // If the user is logged in present the modal, if not
     // present an alert.
     if (user) {
-      presentFavoriteModal({ cssClass: 'favorite-modal' });
+      presentFavoriteModal({ cssClass: 'add-favorite-modal' });
     } else {
       setLoggedInAlert(true);
     }

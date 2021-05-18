@@ -1,0 +1,17 @@
+.view-favorite-modal div.view-favorite-card-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.view-favorite-modal ion-card-subtitle h5 {
+  margin: 0;
+}
+
+.view-favorite-modal ion-card-content p {
+  text-align: justify;
+  line-height: 1.7rem;
+  font-size: 1.2rem;
+  font-weight: 300;
+}

@@ -1,0 +1,6 @@
+.edit-favorite-modal div.edit-favorite-card-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}

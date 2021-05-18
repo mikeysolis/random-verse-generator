@@ -29,12 +29,14 @@ interface FavoriteCardProps {
   favorite: Favorite;
   onEditFavoriteClickHandler: (favorite: Favorite) => void;
   onDeleteFavoriteClickHandler: (favorite: Favorite) => void;
+  onViewFavoriteClickHandler: (favorite: Favorite) => void;
 }
 
 const FavoriteCard: React.FC<FavoriteCardProps> = ({
   favorite,
   onEditFavoriteClickHandler,
   onDeleteFavoriteClickHandler,
+  onViewFavoriteClickHandler,
 }) => {
   // State to track if the user has pressed the delete button
   const [deleteFavoriteAlert, setDeleteFavoriteAlert] =
@@ -64,6 +66,7 @@ const FavoriteCard: React.FC<FavoriteCardProps> = ({
           size="small"
           color="medium"
           className="verse-option-button"
+          onClick={() => onViewFavoriteClickHandler(favorite)}
         >
           <IonIcon className="verse-option-icon" icon={eye} />
         </IonFabButton>

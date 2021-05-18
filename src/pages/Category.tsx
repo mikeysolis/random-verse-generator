@@ -13,21 +13,15 @@ import {
 import {
   IonContent,
   IonPage,
-  IonItem,
   IonHeader,
   IonToolbar,
   IonTitle,
-  IonItemSliding,
-  IonItemOptions,
-  IonItemOption,
-  IonIcon,
   useIonToast,
   IonText,
   IonButtons,
   IonBackButton,
   useIonModal,
 } from '@ionic/react';
-import { trash } from 'ionicons/icons';
 
 import './Category.css';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -37,6 +31,7 @@ import { SubscribeCheck, SignInWithGoogle } from '../components/Customers';
 import { RouteComponentProps } from 'react-router';
 import { Favorite, Category } from '../lib/store/types';
 import EditFavoriteModal from '../components/EditFavoriteModal';
+import ViewFavoriteModal from '../components/ViewFavoriteModal';
 import AlertPopup from '../components/AlertPopup';
 import { deleteFavorite } from '../lib/firebase/db';
 
@@ -115,15 +110,28 @@ const LoggedIn: React.FC<{ id: string }> = ({ id }) => {
     }
   );
 
+  // Handler that runs when a user taps to close the View Favorite Modal
+  const handleViewFavoriteModalDismiss = () => {
+    dismissViewFavoriteModal();
+  };
+
+  // Setup the IonModal hook that pops up when the user taps the Favorites button
+  const [presentViewFavoriteModal, dismissViewFavoriteModal] = useIonModal(
+    ViewFavoriteModal,
+    {
+      favorite: favoriteVerse,
+      onDismiss: handleViewFavoriteModalDismiss,
+    }
+  );
+
   // Run when the user taps the Favorites button for the verse
   const onEditFavoriteClickHandler = (favorite: Favorite) => {
     setFavoriteVerse(favorite);
-    console.log('favorite verse: ', favorite);
 
     // If the user is logged in present the modal, if not
     // present an alert.
     if (user) {
-      presentEditFavoriteModal({ cssClass: 'favorite-modal' });
+      presentEditFavoriteModal({ cssClass: 'edit-favorite-modal' });
     } else {
       setLoggedInAlert(true);
     }
@@ -141,6 +149,11 @@ const LoggedIn: React.FC<{ id: string }> = ({ id }) => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const onViewFavoriteClickHandler = async (favorite: Favorite) => {
+    setFavoriteVerse(favorite);
+    presentViewFavoriteModal({ cssClass: 'view-favorite-modal' });
   };
 
   return (
@@ -166,6 +179,7 @@ const LoggedIn: React.FC<{ id: string }> = ({ id }) => {
             favorite={favorite}
             onEditFavoriteClickHandler={onEditFavoriteClickHandler}
             onDeleteFavoriteClickHandler={onDeleteFavoriteClickHandler}
+            onViewFavoriteClickHandler={onViewFavoriteClickHandler}
           />
         ))
       )}
@@ -190,38 +204,6 @@ const UnSubscribed: React.FC = () => {
       It appears your Free Trial or Subscription has expired. To view your
       Favorites please visit your account page to update your Subscription.
     </BasicCard>
-  );
-};
-
-// Component that displays in individual favorite item
-interface FavoriteItemProps {
-  deleteFavoriteHandler: (verseTitle: string) => void;
-  verseTitle: string;
-}
-const FavoriteItem: React.FC<FavoriteItemProps> = ({
-  deleteFavoriteHandler,
-  verseTitle,
-  children,
-}) => {
-  const onDeleteFavoriteHandler = (verseTitle: string) => {
-    deleteFavoriteHandler(verseTitle);
-  };
-
-  return (
-    <IonItemSliding>
-      <IonItem button={true} detail={false} color="secondary">
-        {children}
-      </IonItem>
-      <IonItemOptions>
-        <IonItemOption
-          color="warning"
-          onClick={() => onDeleteFavoriteHandler(verseTitle)}
-        >
-          <IonIcon slot="start" icon={trash} />
-          Delete
-        </IonItemOption>
-      </IonItemOptions>
-    </IonItemSliding>
   );
 };
 

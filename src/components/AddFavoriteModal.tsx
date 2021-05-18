@@ -120,60 +120,62 @@ const LoggedIn: React.FC<FavoriteModalProps> = ({
   };
 
   return (
-    <>
-      <Card title="Selected Verse">
-        <IonText>
-          <h2 className="ion-padding-bottom">{verse.verseTitle}</h2>
-        </IonText>
-        <IonText>
-          <p>
-            <TruncateVerse verse={verse} />
-          </p>
-        </IonText>
-      </Card>
-      <Card title="Personal Note">
-        <IonText>
-          <p>
-            An optional note to help you remember why you wanted to make this
-            verse a favorite.
-          </p>
-        </IonText>
-        <IonTextarea
-          className="ion-margin-top"
-          autoGrow={true}
-          enterkeyhint="done"
-          inputmode="text"
-          name="note"
-          spellCheck="true"
-          placeholder="Enter note..."
-          value={noteText}
-          onIonChange={e => setNoteText(e.detail.value!)}
-        ></IonTextarea>
-      </Card>
-      <Card title="Category">
-        <IonText>
-          <p>Organize your new favorite into a category.</p>
-        </IonText>
-        <IonSelect
-          title="Categories"
-          value={categoryId}
-          okText="Select"
-          cancelText="Dismiss"
-          onIonChange={e => setCategoryId(e.detail.value)}
-          className="ion-text-capitalize"
-        >
-          {categories &&
-            categories.map(category => (
-              <IonSelectOption
-                key={category.id}
-                value={category.id}
-                className="ion-text-capitalize"
-              >
-                <IonText>{category.name}</IonText>
-              </IonSelectOption>
-            ))}
-        </IonSelect>
-      </Card>
+    <div className="add-favorite-card-container">
+      <div>
+        <Card title="Selected Verse">
+          <IonText>
+            <h2 className="ion-padding-bottom">{verse.verseTitle}</h2>
+          </IonText>
+          <IonText>
+            <p>
+              <TruncateVerse verse={verse} />
+            </p>
+          </IonText>
+        </Card>
+        <Card title="Personal Note">
+          <IonText>
+            <p>
+              An optional note to help you remember why you wanted to make this
+              verse a favorite.
+            </p>
+          </IonText>
+          <IonTextarea
+            className="ion-margin-top"
+            autoGrow={true}
+            enterkeyhint="done"
+            inputmode="text"
+            name="note"
+            spellCheck="true"
+            placeholder="Enter note..."
+            value={noteText}
+            onIonChange={e => setNoteText(e.detail.value!)}
+          ></IonTextarea>
+        </Card>
+        <Card title="Category">
+          <IonText>
+            <p>Organize your new favorite into a category.</p>
+          </IonText>
+          <IonSelect
+            title="Categories"
+            value={categoryId}
+            okText="Select"
+            cancelText="Dismiss"
+            onIonChange={e => setCategoryId(e.detail.value)}
+            className="ion-text-capitalize"
+          >
+            {categories &&
+              categories.map(category => (
+                <IonSelectOption
+                  key={category.id}
+                  value={category.id}
+                  className="ion-text-capitalize"
+                >
+                  <IonText>{category.name}</IonText>
+                </IonSelectOption>
+              ))}
+          </IonSelect>
+        </Card>
+      </div>
       <IonCard className="ion-no-padding ion-padding-top ion-padding-start ion-padding-end">
         <IonButton
           className="ion-text-uppercase ion-margin-bottom"
@@ -184,7 +186,7 @@ const LoggedIn: React.FC<FavoriteModalProps> = ({
           Add Favorite
         </IonButton>
       </IonCard>
-    </>
+    </div>
   );
 };
 
