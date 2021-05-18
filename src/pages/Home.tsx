@@ -14,13 +14,18 @@ import {
   IonToolbar,
   useIonModal,
 } from '@ionic/react';
-import { useUser } from 'reactfire';
+import {
+  AuthCheck,
+  useFirestoreCollectionData,
+  useUser,
+  useFirestore,
+} from 'reactfire';
 
 import { useAppSelector, useAppDispatch } from '../lib/store/hooks';
 import { clear, concatVerses } from '../lib/store/versesSlice';
 import { updateBookmarks } from '../lib/store/bookmarksSlice';
 import { isBookmarked } from '../lib/utils/helpers';
-import { Verse } from '../lib/store/types';
+import { Verse, Category } from '../lib/store/types';
 import SkeletonCards from '../components/SkeletonCards';
 import { BasicCard } from '../components/Cards';
 import AlertPopup from '../components/AlertPopup';
@@ -43,6 +48,13 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   // State to track the current verse the user has selected to set as a Favorite
   const [favoriteVerse, setFavoriteVerse] = useState<Verse | null>(null);
+  // Grab the current users categories
+  const userCategoriesRef = useFirestore()
+    .collection('users')
+    .doc(user?.uid)
+    .collection('categories');
+  const { data: categories } =
+    useFirestoreCollectionData<Category>(userCategoriesRef);
 
   // Function to dispatch a redux action that pulls more verses from the API
   const loadData = ($event: CustomEvent<void>) => {
@@ -61,6 +73,7 @@ const Home: React.FC = () => {
     {
       user,
       verse: favoriteVerse,
+      categories,
       onDismiss: handleFavoriteModalDismiss,
     }
   );

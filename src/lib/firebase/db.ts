@@ -16,12 +16,28 @@ export const addFavorite = (
   verseTitle: string,
   favorite: Favorite
 ) => {
-  return db
+  // Set up the batch
+  const batch = db.batch();
+
+  // First add the new favorite
+  const favoriteRef = db
     .collection('users')
     .doc(uid)
     .collection('favorites')
-    .doc(verseTitle)
-    .set(favorite, { merge: true });
+    .doc(verseTitle);
+  batch.set(favoriteRef, favorite);
+
+  // Second, increment the category by 1
+  const categoryRef = db
+    .collection('users')
+    .doc(uid)
+    .collection('categories')
+    .doc(favorite.categoryId);
+  batch.update(categoryRef, {
+    count: firebase.firestore.FieldValue.increment(1),
+  });
+
+  return batch.commit();
 };
 
 export const loadFavorites = (uid: string) => {

@@ -133,7 +133,7 @@ const LoggedIn: React.FC = () => {
       </div>
       <IonList className="favorites-list" lines="full">
         <IonListHeader>
-          <IonLabel>My Categories</IonLabel>
+          <IonLabel>Favorites by Category</IonLabel>
         </IonListHeader>
         {categories.length === 0 && <IonItem>No categories yet</IonItem>}
         {categories.map(category => (
@@ -191,19 +191,21 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
         routerLink={`/favorites/${category.id}`}
       >
         <IonText className="ion-text-capitalize">{category.name}</IonText>
-        <IonBadge slot="end" color="primary">
+        <IonBadge slot="end" color={category.count! < 1 ? 'light' : 'warning'}>
           {category.count}
         </IonBadge>
       </IonItem>
-      <IonItemOptions>
-        <IonItemOption
-          color="danger"
-          onClick={() => onTapDeleteHandler(category)}
-        >
-          <IonIcon slot="start" icon={trash} />
-          Delete
-        </IonItemOption>
-      </IonItemOptions>
+      {category.id !== 'uncategorized' && (
+        <IonItemOptions>
+          <IonItemOption
+            color="danger"
+            onClick={() => onTapDeleteHandler(category)}
+          >
+            <IonIcon slot="start" icon={trash} />
+            Delete
+          </IonItemOption>
+        </IonItemOptions>
+      )}
     </IonItemSliding>
   );
 };

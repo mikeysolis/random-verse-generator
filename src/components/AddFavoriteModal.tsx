@@ -14,6 +14,10 @@ import {
   IonContent,
   IonHeader,
   IonIcon,
+  IonItem,
+  IonLabel,
+  IonSelect,
+  IonSelectOption,
   IonText,
   IonTextarea,
   IonTitle,
@@ -25,7 +29,7 @@ import firebase from 'firebase/app';
 import { addFavorite } from '../lib/firebase/db';
 
 import './AddFavoriteModal.css';
-import { Verse, Favorite } from '../lib/store/types';
+import { Verse, Favorite, Category } from '../lib/store/types';
 
 /**
  * Main display component, recieves neccessary props for the modal to function.
@@ -35,18 +39,58 @@ import { Verse, Favorite } from '../lib/store/types';
 interface FavoriteModalProps {
   user: firebase.User;
   verse: Verse;
+  categories: Category[];
   onDismiss: () => void;
 }
 
 const FavoriteModal: React.FC<FavoriteModalProps> = ({
   user,
   verse,
+  categories,
+  onDismiss,
+}) => {
+  return (
+    <>
+      <IonHeader>
+        <IonToolbar color="primary">
+          <IonTitle>Add Favorite</IonTitle>
+          <IonButtons slot="end">
+            <IonButton onClick={() => onDismiss()}>
+              <IonIcon size="large" icon={close} />
+            </IonButton>
+          </IonButtons>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent fullscreen>
+        {user ? (
+          <LoggedIn
+            user={user}
+            verse={verse}
+            categories={categories}
+            onDismiss={onDismiss}
+          />
+        ) : (
+          <LoggedOut />
+        )}
+      </IonContent>
+    </>
+  );
+};
+
+// Content to display if the user is logged in
+
+const LoggedIn: React.FC<FavoriteModalProps> = ({
+  user,
+  verse,
+  categories,
   onDismiss,
 }) => {
   // Set up the IonToast to alert user if favorite has been successfully added
   const [presentToast, dismissToast] = useIonToast();
   // Setup the state for handling the Note textfield
   const [noteText, setNoteText] = useState<string>('');
+  // State for handling the Category select input
+  const [categoryId, setCategoryId] = useState<string>('uncategorized');
 
   // Handler for adding the verse to firebase
   const onClickAddFavoriteHandler = async () => {
@@ -56,6 +100,7 @@ const FavoriteModal: React.FC<FavoriteModalProps> = ({
       verseId: verse.verseId,
       volumeTitle: verse.volumeTitle,
       scriptureText: verse.scriptureText,
+      categoryId,
     };
 
     if (noteText !== '') favorite.note = noteText;
@@ -76,48 +121,6 @@ const FavoriteModal: React.FC<FavoriteModalProps> = ({
     onDismiss();
   };
 
-  return (
-    <>
-      <IonHeader>
-        <IonToolbar color="primary">
-          <IonTitle>Add Favorite</IonTitle>
-          <IonButtons slot="end">
-            <IonButton onClick={() => onDismiss()}>
-              <IonIcon size="large" icon={close} />
-            </IonButton>
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent fullscreen>
-        {user ? (
-          <LoggedIn
-            onClickAddFavoriteHandler={onClickAddFavoriteHandler}
-            verse={verse}
-            noteText={noteText}
-            setNoteText={setNoteText}
-          />
-        ) : (
-          <LoggedOut />
-        )}
-      </IonContent>
-    </>
-  );
-};
-
-// Content to display if the user is logged in
-interface LoggedInProps {
-  onClickAddFavoriteHandler: () => void;
-  verse: Verse;
-  noteText: string;
-  setNoteText: React.Dispatch<React.SetStateAction<string>>;
-}
-
-const LoggedIn: React.FC<LoggedInProps> = ({
-  onClickAddFavoriteHandler,
-  verse,
-  noteText,
-  setNoteText,
-}) => {
   return (
     <>
       <Card title="Selected Verse">
@@ -148,6 +151,30 @@ const LoggedIn: React.FC<LoggedInProps> = ({
           value={noteText}
           onIonChange={e => setNoteText(e.detail.value!)}
         ></IonTextarea>
+      </Card>
+      <Card title="Category">
+        <IonText>
+          <p>Organize your new favorite into a category.</p>
+        </IonText>
+        <IonSelect
+          title="Categories"
+          value={categoryId}
+          okText="Select"
+          cancelText="Dismiss"
+          onIonChange={e => setCategoryId(e.detail.value)}
+          className="ion-text-capitalize"
+        >
+          {categories &&
+            categories.map(category => (
+              <IonSelectOption
+                key={category.id}
+                value={category.id}
+                className="ion-text-capitalize"
+              >
+                <IonText>{category.name}</IonText>
+              </IonSelectOption>
+            ))}
+        </IonSelect>
       </Card>
       <IonCard className="ion-no-padding ion-padding-top ion-padding-start ion-padding-end">
         <IonButton
