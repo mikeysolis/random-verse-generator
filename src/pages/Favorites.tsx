@@ -98,7 +98,7 @@ const LoggedIn: React.FC = () => {
       uid: user.uid,
       category: {
         id,
-        name: inputValue,
+        name: inputValue.toLowerCase(),
         count: 0,
       },
     };
