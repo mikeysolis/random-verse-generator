@@ -3,7 +3,7 @@
  * scriptures.
  */
 
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense } from 'react';
 import {
   useFirestore,
   useFirestoreCollectionData,
@@ -27,14 +27,13 @@ import {
   IonButtons,
   IonBackButton,
 } from '@ionic/react';
-import { filter, trash } from 'ionicons/icons';
+import { trash } from 'ionicons/icons';
 
 import './Category.css';
 import { deleteFavorite } from '../lib/firebase/db';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { BasicCard } from '../components/Cards';
 import { SubscribeCheck, SignInWithGoogle } from '../components/Customers';
-import { useAppSelector } from '../lib/store/hooks';
 import { RouteComponentProps } from 'react-router';
 import { Favorite } from '../lib/store/types';
 
@@ -75,18 +74,15 @@ const LoggedIn: React.FC<{ id: string }> = ({ id }) => {
   const [presentToast, dismissToast] = useIonToast();
   // Grab the current user
   const { data: user } = useUser();
-  // Grab the current categories state from redux
-  const { data: favorites } = useAppSelector(state => state.favorites);
-  const [favsByCategory, setFavsByCategory] = useState<Favorite[]>([]);
 
-  // const filteredFavorites = (id: string): Favorite[] => {
-  //   return favorites.filter(fav => fav.categoryId === id);
-  // };
-
-  useEffect(() => {
-    const filteredFavorites = favorites.filter(fav => fav.categoryId === id);
-    setFavsByCategory(filteredFavorites);
-  }, [favorites, id]);
+  // Grab the current users categories
+  const userFavoritesRef = useFirestore()
+    .collection('users')
+    .doc(user!.uid)
+    .collection('favorites')
+    .where('categoryId', '==', id);
+  const { data: favorites } =
+    useFirestoreCollectionData<Favorite>(userFavoritesRef);
 
   const deleteFavoriteHandler = async (verseTitle: string) => {
     try {
@@ -111,7 +107,7 @@ const LoggedIn: React.FC<{ id: string }> = ({ id }) => {
         </BasicCard>
       ) : (
         <IonList className="favorites-list" inset={true}>
-          {favsByCategory.map(({ verseId, verseTitle, scriptureText }) => (
+          {favorites.map(({ verseId, verseTitle, scriptureText }) => (
             <FavoriteItem
               key={verseId}
               verseTitle={verseTitle!}

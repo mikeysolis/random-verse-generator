@@ -4,7 +4,12 @@
  */
 
 import { Suspense, useState } from 'react';
-import { AuthCheck, useUser } from 'reactfire';
+import {
+  AuthCheck,
+  useFirestoreCollectionData,
+  useUser,
+  useFirestore,
+} from 'reactfire';
 import {
   IonContent,
   IonPage,
@@ -28,17 +33,10 @@ import {
 import { trash, add } from 'ionicons/icons';
 
 import './Favorites.css';
-import { useAppSelector, useAppDispatch } from '../lib/store/hooks';
-import {
-  loadCategories,
-  deleteCategory,
-  addCategory,
-} from '../lib/store/categoriesSlice';
-import { loadFavorites } from '../lib/store/favoritesSlice';
+import { addCategory, deleteCategory } from '../lib/firebase/db';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { BasicCard } from '../components/Cards';
 import { SubscribeCheck, SignInWithGoogle } from '../components/Customers';
-import { useEffect } from 'react';
 import { Category } from '../lib/store/types';
 
 const Favs: React.FC = () => {
@@ -66,20 +64,21 @@ const LoggedIn: React.FC = () => {
   const [presentToast, dismissToast] = useIonToast();
   // Setup state for the add category input
   const [inputValue, setInputValue] = useState<string>('');
-  // Grab the apps dispatch method for handling state
-  const dispatch = useAppDispatch();
-  // Grab the current categories state from redux
-  const { categories } = useAppSelector(state => state);
-  // Grabh the current user
+
+  // Grab the current user
   const { data: user } = useUser();
 
-  useEffect(() => {
-    dispatch(loadCategories(user.uid));
-    dispatch(loadFavorites(user.uid));
-  }, [dispatch, user.uid]);
+  // Grab the current users categories
+  const userCategoriesRef = useFirestore()
+    .collection('users')
+    .doc(user?.uid)
+    .collection('categories');
+  const { data: categories } =
+    useFirestoreCollectionData<Category>(userCategoriesRef);
 
-  const categoryDeleteHandler = (category: Category) => {
-    dispatch(deleteCategory({ uid: user.uid, category }));
+  const categoryDeleteHandler = async (category: Category) => {
+    await deleteCategory(user.uid, category.id!);
+
     presentToast({
       buttons: [{ text: 'close', handler: () => dismissToast() }],
       message: 'Category successfully deleted.',
@@ -88,22 +87,19 @@ const LoggedIn: React.FC = () => {
     });
   };
 
-  const addCategoryHandler = () => {
+  const addCategoryHandler = async () => {
     // Replace whitespace with dashes and convert id to lowercase
     const id = inputValue.replace(/\s+/g, '-').toLowerCase();
 
     // TODO: needs to add some input validation
     // Setup the object to be dispatched
     const category = {
-      uid: user.uid,
-      category: {
-        id,
-        name: inputValue.toLowerCase(),
-        count: 0,
-      },
+      id,
+      name: inputValue.toLowerCase(),
+      count: 0,
     };
 
-    dispatch(addCategory(category));
+    await addCategory(user.uid, category);
 
     setInputValue('');
 
@@ -139,8 +135,8 @@ const LoggedIn: React.FC = () => {
         <IonListHeader>
           <IonLabel>My Categories</IonLabel>
         </IonListHeader>
-        {categories.data.length === 0 && <IonItem>No categories yet</IonItem>}
-        {categories.data.map(category => (
+        {categories.length === 0 && <IonItem>No categories yet</IonItem>}
+        {categories.map(category => (
           <CategoryItem
             key={category.name}
             category={category}
