@@ -34,17 +34,14 @@ const fetchFromAPI = async (
   const user = auth.currentUser;
   const token = user && (await user.getIdToken());
 
-  const res = await fetch(
-    `https://hwwgh1n540.execute-api.us-west-2.amazonaws.com/dev/${endpointURL}`,
-    {
-      method,
-      ...(body && { body: JSON.stringify(body) }),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const res = await fetch(`${STRIPE_API}/${endpointURL}`, {
+    method,
+    ...(body && { body: JSON.stringify(body) }),
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   return res.json();
 };
