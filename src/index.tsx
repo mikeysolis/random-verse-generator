@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Elements } from '@stripe/react-stripe-js';
@@ -7,7 +7,6 @@ import { FirebaseAppProvider } from 'reactfire';
 import { firebaseConfig } from './lib/firebase/config';
 
 import App from './App';
-import LoadingApp from './components/LoadingApp';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import store from './lib/store/store';
@@ -23,9 +22,7 @@ ReactDOM.render(
     <Provider store={store}>
       <FirebaseAppProvider firebaseConfig={firebaseConfig} suspense={true}>
         <Elements stripe={stripePromise}>
-          <Suspense fallback={<LoadingApp />}>
-            <App />
-          </Suspense>
+          <App />
         </Elements>
       </FirebaseAppProvider>
     </Provider>

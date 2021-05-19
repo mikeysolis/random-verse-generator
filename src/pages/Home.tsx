@@ -12,15 +12,13 @@ import {
   IonSpinner,
   IonHeader,
   IonToolbar,
-  useIonModal,
 } from '@ionic/react';
-import { useFirestoreCollectionData, useUser, useFirestore } from 'reactfire';
 
 import { useAppSelector, useAppDispatch } from '../lib/store/hooks';
 import { clear, concatVerses } from '../lib/store/versesSlice';
 import { updateBookmarks } from '../lib/store/bookmarksSlice';
 import { isBookmarked } from '../lib/utils/helpers';
-import { Verse, Category } from '../lib/store/types';
+import { Verse } from '../lib/store/types';
 import SkeletonCards from '../components/SkeletonCards';
 import { BasicCard } from '../components/Cards';
 import AlertPopup from '../components/AlertPopup';
@@ -31,9 +29,6 @@ import VolumeSegment from '../components/VolumeSegment';
 const Home: React.FC = () => {
   // Grab the apps dispatch method for handling state
   const dispatch = useAppDispatch();
-  // Grab the current user
-  const { data: user } = useUser();
-  // State to track whether to show the logged in alert
   const [loggedInAlert, setLoggedInAlert] = useState<boolean>(false);
   // Grab the current verses and bookmarks state from redux
   const { verses, bookmarks } = useAppSelector(state => state);
@@ -43,35 +38,15 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   // State to track the current verse the user has selected to set as a Favorite
   const [favoriteVerse, setFavoriteVerse] = useState<Verse | null>(null);
-  // Grab the current users categories
-  const userCategoriesRef = useFirestore()
-    .collection('users')
-    .doc(user?.uid)
-    .collection('categories');
-  const { data: categories } =
-    useFirestoreCollectionData<Category>(userCategoriesRef);
+  // State for opening and closing the AddFavoriteModal
+  const [showAddFavoriteModal, setShowAddFavoriteModal] =
+    useState<boolean>(false);
 
   // Function to dispatch a redux action that pulls more verses from the API
   const loadData = ($event: CustomEvent<void>) => {
     dispatch(concatVerses(volumeId));
     ($event.target as HTMLIonInfiniteScrollElement).complete();
   };
-
-  // Handler that runs when a user taps to close the Favorites Modal
-  const handleFavoriteModalDismiss = () => {
-    dismissFavoriteModal();
-  };
-
-  // Setup the IonModal hook that pops up when the user taps the Favorites button
-  const [presentFavoriteModal, dismissFavoriteModal] = useIonModal(
-    FavoriteModal,
-    {
-      user,
-      verse: favoriteVerse,
-      categories,
-      onDismiss: handleFavoriteModalDismiss,
-    }
-  );
 
   // Function is run when the user changes the Volume of scripture
   const onIonSegmentChangeHandler = async (e: CustomEvent) => {
@@ -90,14 +65,7 @@ const Home: React.FC = () => {
   // Run when the user taps the Favorites button for the verse
   const onFavoriteClickHandler = (verse: Verse) => {
     setFavoriteVerse(verse);
-
-    // If the user is logged in present the modal, if not
-    // present an alert.
-    if (user) {
-      presentFavoriteModal({ cssClass: 'add-favorite-modal' });
-    } else {
-      setLoggedInAlert(true);
-    }
+    setShowAddFavoriteModal(true);
   };
 
   // If verses are loading from Scripture API show skeleton cards.
@@ -140,6 +108,11 @@ const Home: React.FC = () => {
         message="The Favorites feature saves your favorite verses to the cloud 
         and requires users to be logged in. For now we recommend Bookmarking the verse, 
         then you can easily find it later if you would still like to save it as a Favorite."
+      />
+      <FavoriteModal
+        verse={favoriteVerse!}
+        isOpen={showAddFavoriteModal}
+        onDismiss={setShowAddFavoriteModal}
       />
       {verses.data.map((verse: any, i: number) => (
         <VerseCard
