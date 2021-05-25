@@ -12,7 +12,13 @@ import {
   IonToolbar,
   IonTitle,
 } from '@ionic/react';
-import { AuthCheck } from 'reactfire';
+import {
+  useUser,
+  useFirestore,
+  useFirestoreDocData,
+  AuthCheck,
+} from 'reactfire';
+import { ErrorBoundary } from 'react-error-boundary';
 
 import Checkout from '../components/Checkout';
 import {
@@ -36,7 +42,9 @@ const Account: React.FC = () => {
       <IonContent className="ion-padding-top">
         <Suspense fallback={<LoadingSpinner />}>
           <AuthCheck fallback={<LoggedOut />}>
-            <LoggedIn />
+            <ErrorBoundary FallbackComponent={ErrorFallback}>
+              <LoggedIn />
+            </ErrorBoundary>
           </AuthCheck>
         </Suspense>
       </IonContent>
@@ -46,27 +54,35 @@ const Account: React.FC = () => {
 
 // Show to the user if they are logged in
 export const LoggedIn: React.FC = () => {
+  // Grab the current user
+  const { data: user } = useUser();
+
+  // Retrieve the users Document Ref from firebase
+  const userDetailsRef = useFirestore().collection('users').doc(user.uid);
+  // Subscribe to the status field on the user Document
+  const {
+    data: { status },
+  } = useFirestoreDocData<{ status: string }>(userDetailsRef);
+
   return (
-    <>
-      <SubscribeCheck
-        fallback={
-          <PrettyCard title="Subscribe" button={<Checkout />}>
-            Become a member today and start saving your Favorite verses to the
-            Cloud. They will always be available when you need them for talks,
-            sermons, lessons and spiritual thoughts! Only .99 cents a month!
-          </PrettyCard>
-        }
-      >
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      {status === 'ACTIVE' || status === 'PAST_DUE' ? (
         <PrettyCard title="Manage Subscription" button={<Portal />}>
           Easily manage your membership subscription. Add, update, and remove
           payment methods. Cancel or renew your subscription at anytime.
         </PrettyCard>
-      </SubscribeCheck>
+      ) : (
+        <PrettyCard title="Subscribe" button={<Checkout />}>
+          Become a member today and start saving your Favorite verses to the
+          Cloud. They will always be available when you need them for talks,
+          sermons, lessons and spiritual thoughts! Only .99 cents a month!
+        </PrettyCard>
+      )}
       <PrettyCard title="Logout" button={<SignOut />}>
         To access every feature we recommend you stay logged in but if you do
         need to logout, here is where you do that!
       </PrettyCard>
-    </>
+    </ErrorBoundary>
   );
 };
 
@@ -78,6 +94,19 @@ export const LoggedOut: React.FC = ({ children }) => {
         To become a free member, or manage your subscription, please sign in
         with your preferred provider.
       </BasicCard>
+    </div>
+  );
+};
+
+const ErrorFallback: React.FC<{ error: any; resetErrorBoundary: any }> = ({
+  error,
+  resetErrorBoundary,
+}) => {
+  return (
+    <div role="alert">
+      <p>Something went wrong:</p>
+      <pre>{error.message}</pre>
+      <button onClick={resetErrorBoundary}>Try again</button>
     </div>
   );
 };

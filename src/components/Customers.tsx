@@ -25,7 +25,7 @@ export const SubscribeCheck: React.FC<SubscribeCheckProps> = ({
   const { data: user } = useUser();
 
   // Retrieve the users Document Ref from firebase
-  const userDetailsRef = useFirestore().collection('users').doc(user?.uid);
+  const userDetailsRef = useFirestore().collection('users').doc(user.uid);
   // Subscribe to the status field on the user Document
   const {
     data: { status },
@@ -52,22 +52,26 @@ export const SignInWithGoogle: React.FC = () => {
     const batch = firestore.batch();
 
     const userRef = firestore.collection('users').doc(uid);
-    batch.set(userRef, { email }, { merge: true });
-
-    const categoryRef = firestore
-      .collection('users')
-      .doc(uid)
-      .collection('categories')
-      .doc('uncategorized');
     batch.set(
-      categoryRef,
-      {
-        id: 'uncategorized',
-        name: 'uncategorized',
-        count: 0,
-      },
+      userRef,
+      { email, roles: ['user'], status: 'INACTIVE' },
       { merge: true }
     );
+
+    // const categoryRef = firestore
+    //   .collection('users')
+    //   .doc(uid)
+    //   .collection('categories')
+    //   .doc('uncategorized');
+    // batch.set(
+    //   categoryRef,
+    //   {
+    //     id: 'uncategorized',
+    //     name: 'uncategorized',
+    //     count: 0,
+    //   },
+    //   { merge: true }
+    // );
 
     await batch.commit();
   };
