@@ -4,7 +4,6 @@
  * to lock it behind authorization.
  */
 
-import { Suspense } from 'react';
 import {
   IonContent,
   IonPage,
@@ -12,22 +11,12 @@ import {
   IonToolbar,
   IonTitle,
 } from '@ionic/react';
-import {
-  useUser,
-  useFirestore,
-  useFirestoreDocData,
-  AuthCheck,
-} from 'reactfire';
-import { ErrorBoundary } from 'react-error-boundary';
 
+import AuthCheck from '../components/AuthCheck';
+import { useContext } from '../lib/user/context';
 import Checkout from '../components/Checkout';
-import {
-  SignInWithGoogle,
-  SignOut,
-  SubscribeCheck,
-} from '../components/Customers';
+import { SignInWithGoogle, SignOut } from '../components/Customers';
 import Portal from '../components/Portal';
-import LoadingSpinner from '../components/LoadingSpinner';
 import { PrettyCard, BasicCard } from '../components/Cards';
 
 // The main content component for the Dashboard
@@ -40,13 +29,9 @@ const Account: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding-top">
-        <Suspense fallback={<LoadingSpinner />}>
-          <AuthCheck fallback={<LoggedOut />}>
-            <ErrorBoundary FallbackComponent={ErrorFallback}>
-              <LoggedIn />
-            </ErrorBoundary>
-          </AuthCheck>
-        </Suspense>
+        <AuthCheck fallback={<LoggedOut />}>
+          <LoggedIn />
+        </AuthCheck>
       </IonContent>
     </IonPage>
   );
@@ -54,18 +39,9 @@ const Account: React.FC = () => {
 
 // Show to the user if they are logged in
 export const LoggedIn: React.FC = () => {
-  // Grab the current user
-  const { data: user } = useUser();
-
-  // Retrieve the users Document Ref from firebase
-  const userDetailsRef = useFirestore().collection('users').doc(user.uid);
-  // Subscribe to the status field on the user Document
-  const {
-    data: { status },
-  } = useFirestoreDocData<{ status: string }>(userDetailsRef);
-
+  const { status } = useContext();
   return (
-    <ErrorBoundary FallbackComponent={ErrorFallback}>
+    <>
       {status === 'ACTIVE' || status === 'PAST_DUE' ? (
         <PrettyCard title="Manage Subscription" button={<Portal />}>
           Easily manage your membership subscription. Add, update, and remove
@@ -82,31 +58,18 @@ export const LoggedIn: React.FC = () => {
         To access every feature we recommend you stay logged in but if you do
         need to logout, here is where you do that!
       </PrettyCard>
-    </ErrorBoundary>
+    </>
   );
 };
 
 // Show to the user if they are logged out
-export const LoggedOut: React.FC = ({ children }) => {
+export const LoggedOut: React.FC = () => {
   return (
     <div className="container">
       <BasicCard title="Sign In / Sign Up" button={<SignInWithGoogle />}>
         To become a free member, or manage your subscription, please sign in
         with your preferred provider.
       </BasicCard>
-    </div>
-  );
-};
-
-const ErrorFallback: React.FC<{ error: any; resetErrorBoundary: any }> = ({
-  error,
-  resetErrorBoundary,
-}) => {
-  return (
-    <div role="alert">
-      <p>Something went wrong:</p>
-      <pre>{error.message}</pre>
-      <button onClick={resetErrorBoundary}>Try again</button>
     </div>
   );
 };

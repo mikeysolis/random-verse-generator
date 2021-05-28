@@ -1,5 +1,5 @@
 import firebase from 'firebase/app';
-import { db } from './config';
+import { firestore } from './config';
 import { Category, Favorite } from '../store/types';
 
 export const deleteFavorite = (uid: string, favorite: Favorite) => {
@@ -7,10 +7,10 @@ export const deleteFavorite = (uid: string, favorite: Favorite) => {
   // it's category by 1.
 
   // Set up the firestore batch
-  const batch = db.batch();
+  const batch = firestore.batch();
 
   // First delete the Favorite
-  const favoriteRef = db
+  const favoriteRef = firestore
     .collection('users')
     .doc(uid)
     .collection('favorites')
@@ -18,7 +18,7 @@ export const deleteFavorite = (uid: string, favorite: Favorite) => {
   batch.delete(favoriteRef);
 
   // Second decrement the category
-  const categoryRef = db
+  const categoryRef = firestore
     .collection('users')
     .doc(uid)
     .collection('categories')
@@ -36,10 +36,10 @@ export const addFavorite = (
   favorite: Favorite
 ) => {
   // Set up the batch
-  const batch = db.batch();
+  const batch = firestore.batch();
 
   // First add the new favorite
-  const favoriteRef = db
+  const favoriteRef = firestore
     .collection('users')
     .doc(uid)
     .collection('favorites')
@@ -47,7 +47,7 @@ export const addFavorite = (
   batch.set(favoriteRef, favorite, { merge: true });
 
   // Second, increment the category by 1
-  const categoryRef = db
+  const categoryRef = firestore
     .collection('users')
     .doc(uid)
     .collection('categories')
@@ -67,7 +67,7 @@ export const updateFavorite = async (
   // Update is different from adding. When updating I need to first
   // decrement the old category, the update the favorite, then increment
   // the new category.
-  const oldCategoryRef = db
+  const oldCategoryRef = firestore
     .collection('users')
     .doc(uid)
     .collection('favorites')
@@ -76,10 +76,10 @@ export const updateFavorite = async (
   const categoryId = oldCategorySnapshot.get('categoryId');
 
   // Set up the batch
-  const batch = db.batch();
+  const batch = firestore.batch();
 
   // First update the favorite
-  const favoriteRef = db
+  const favoriteRef = firestore
     .collection('users')
     .doc(uid)
     .collection('favorites')
@@ -89,7 +89,7 @@ export const updateFavorite = async (
   // Second, if the category has changed
   if (categoryId !== favorite.categoryId) {
     // Increment the new category by 1
-    const newCategoryRef = db
+    const newCategoryRef = firestore
       .collection('users')
       .doc(uid)
       .collection('categories')
@@ -98,7 +98,7 @@ export const updateFavorite = async (
       count: firebase.firestore.FieldValue.increment(1),
     });
     // Decrement the old category by 1
-    const oldCategoryRef = db
+    const oldCategoryRef = firestore
       .collection('users')
       .doc(uid)
       .collection('categories')
@@ -112,11 +112,11 @@ export const updateFavorite = async (
 };
 
 export const loadFavorites = (uid: string) => {
-  return db.collection('users').doc(uid).collection('favorites').get();
+  return firestore.collection('users').doc(uid).collection('favorites').get();
 };
 
 export const addCategory = async (uid: string, category: Category) => {
-  return await db
+  return await firestore
     .collection('users')
     .doc(uid)
     .collection('categories')
@@ -129,10 +129,10 @@ export const deleteCategory = async (uid: string, id: string) => {
   // setting the category to uncategorized.
 
   // Setup the batch
-  const batch = db.batch();
+  const batch = firestore.batch();
 
   // Add the category deletion to the batch
-  const categoryRef = db
+  const categoryRef = firestore
     .collection('users')
     .doc(uid)
     .collection('categories')
@@ -142,7 +142,10 @@ export const deleteCategory = async (uid: string, id: string) => {
 
   // Grab a reference to all favorites with the category being deleted.
   // Then add the results to be updated with the batch.
-  const favoritesRef = db.collection('users').doc(uid).collection('favorites');
+  const favoritesRef = firestore
+    .collection('users')
+    .doc(uid)
+    .collection('favorites');
   const favoritesSnapshop = await favoritesRef
     .where('categoryId', '==', id)
     .get();
@@ -150,7 +153,7 @@ export const deleteCategory = async (uid: string, id: string) => {
   if (!favoritesSnapshop.empty) {
     // Set up a doc ref for the uncategorized Doc, we'll need it to
     // increment it's count by one for each favorite.
-    const uncategorizedRef = db
+    const uncategorizedRef = firestore
       .collection('users')
       .doc(uid)
       .collection('categories')
@@ -169,5 +172,5 @@ export const deleteCategory = async (uid: string, id: string) => {
 };
 
 export const loadCategories = (uid: string) => {
-  return db.collection('users').doc(uid).collection('categories').get();
+  return firestore.collection('users').doc(uid).collection('categories').get();
 };

@@ -5,12 +5,6 @@
 
 import { Suspense, useState } from 'react';
 import {
-  AuthCheck,
-  useFirestoreCollectionData,
-  useUser,
-  useFirestore,
-} from 'reactfire';
-import {
   IonContent,
   IonPage,
   IonList,
@@ -33,6 +27,8 @@ import {
 import { trash, add } from 'ionicons/icons';
 
 import './Favorites.css';
+import AuthCheck from '../components/AuthCheck';
+import { useContext } from '../lib/user/context';
 import { addCategory, deleteCategory } from '../lib/firebase/db';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { BasicCard } from '../components/Cards';
@@ -66,18 +62,10 @@ const LoggedIn: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>('');
 
   // Grab the current user
-  const { data: user } = useUser();
-
-  // Grab the current users categories
-  const userCategoriesRef = useFirestore()
-    .collection('users')
-    .doc(user?.uid)
-    .collection('categories');
-  const { data: categories } =
-    useFirestoreCollectionData<Category>(userCategoriesRef);
+  const { user, categories } = useContext();
 
   const categoryDeleteHandler = async (category: Category) => {
-    await deleteCategory(user.uid, category.id!);
+    await deleteCategory(user!.uid, category.id!);
 
     presentToast({
       buttons: [{ text: 'close', handler: () => dismissToast() }],
@@ -99,7 +87,7 @@ const LoggedIn: React.FC = () => {
       count: 0,
     };
 
-    await addCategory(user.uid, category);
+    await addCategory(user!.uid, category);
 
     setInputValue('');
 

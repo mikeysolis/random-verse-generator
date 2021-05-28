@@ -45,6 +45,7 @@ import './theme/variables.css';
 import './theme/Global.css';
 
 const App: React.FC = () => {
+  // Redux state setup
   const dispatch = useAppDispatch();
   const bookmarkState = useAppSelector(state => state.bookmarks);
 

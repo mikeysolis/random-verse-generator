@@ -3,7 +3,11 @@ service cloud.firestore {
   match /databases/{database}/documents {
     
     match /users/{userId} {
-    	allow read, write: if isSignedIn() && isOwner();
+    	allow read, write: if isSignedIn();
+
+      match /categories/{categoryId} {
+        allow read, write: if isSignedIn();
+      }
     }
 
     function isSignedIn() {

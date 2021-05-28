@@ -5,11 +5,11 @@
  * SingOut
  */
 
-import firebase from 'firebase/app';
-import { useUser, useFirestore, useFirestoreDocData, useAuth } from 'reactfire';
 import { IonButton } from '@ionic/react';
 
 import './Customers.css';
+import { useContext } from '../lib/user/context';
+import { auth, firestore, googleAuthProvider } from '../lib/firebase/config';
 
 // Component to verify if the logged in user has an ACTIVE subscription.
 // Must be run from within an AuthCheck component
@@ -22,14 +22,7 @@ export const SubscribeCheck: React.FC<SubscribeCheckProps> = ({
   children,
 }) => {
   // Grab the current user
-  const { data: user } = useUser();
-
-  // Retrieve the users Document Ref from firebase
-  const userDetailsRef = useFirestore().collection('users').doc(user.uid);
-  // Subscribe to the status field on the user Document
-  const {
-    data: { status },
-  } = useFirestoreDocData<{ status: string }>(userDetailsRef);
+  const { status } = useContext();
 
   // If the user status is ACTIVE or PAST_DUE allow access, else not.
   return (
@@ -39,13 +32,8 @@ export const SubscribeCheck: React.FC<SubscribeCheckProps> = ({
 
 // SignIn Button for Google
 export const SignInWithGoogle: React.FC = () => {
-  const auth = useAuth();
-  const firestore = useFirestore();
-
   const signIn = async () => {
-    const credential = await auth.signInWithPopup(
-      new firebase.auth.GoogleAuthProvider()
-    );
+    const credential = await auth.signInWithPopup(googleAuthProvider);
 
     const { uid, email } = credential.user!;
 
@@ -58,20 +46,20 @@ export const SignInWithGoogle: React.FC = () => {
       { merge: true }
     );
 
-    // const categoryRef = firestore
-    //   .collection('users')
-    //   .doc(uid)
-    //   .collection('categories')
-    //   .doc('uncategorized');
-    // batch.set(
-    //   categoryRef,
-    //   {
-    //     id: 'uncategorized',
-    //     name: 'uncategorized',
-    //     count: 0,
-    //   },
-    //   { merge: true }
-    // );
+    const categoryRef = firestore
+      .collection('users')
+      .doc(uid)
+      .collection('categories')
+      .doc('uncategorized');
+    batch.set(
+      categoryRef,
+      {
+        id: 'uncategorized',
+        name: 'uncategorized',
+        count: 0,
+      },
+      { merge: true }
+    );
 
     await batch.commit();
   };
@@ -82,7 +70,6 @@ export const SignInWithGoogle: React.FC = () => {
 // Signout Button
 
 export const SignOut: React.FC = () => {
-  const auth = useAuth();
   return (
     <IonButton
       onClick={() => auth.signOut()}
