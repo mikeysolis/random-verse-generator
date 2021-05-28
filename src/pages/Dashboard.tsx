@@ -15,7 +15,7 @@ import {
 import AuthCheck from '../components/AuthCheck';
 import { useContext } from '../lib/user/context';
 import Checkout from '../components/Checkout';
-import { SignInWithGoogle, SignOut } from '../components/Customers';
+import { SignInWithGoogle, SignOut } from '../components/Auth';
 import Portal from '../components/Portal';
 import { PrettyCard, BasicCard } from '../components/Cards';
 

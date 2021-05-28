@@ -7,7 +7,7 @@
 
 import { IonButton } from '@ionic/react';
 
-import './Customers.css';
+import './Auth.css';
 import { useContext } from '../lib/user/context';
 import { auth, firestore, googleAuthProvider } from '../lib/firebase/config';
 

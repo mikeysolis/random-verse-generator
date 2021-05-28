@@ -3,13 +3,7 @@
  * scriptures.
  */
 
-import { Suspense, useState } from 'react';
-import {
-  useFirestore,
-  useFirestoreCollectionData,
-  AuthCheck,
-  useUser,
-} from 'reactfire';
+import { useState } from 'react';
 import {
   IonContent,
   IonPage,
@@ -24,10 +18,11 @@ import {
 } from '@ionic/react';
 
 import './Category.css';
-import LoadingSpinner from '../components/LoadingSpinner';
+import { useContext } from '../lib/user/context';
+import AuthCheck from '../components/AuthCheck';
 import { BasicCard } from '../components/Cards';
 import FavoriteCard from '../components/FavoriteCard';
-import { SubscribeCheck, SignInWithGoogle } from '../components/Customers';
+import { SubscribeCheck, SignInWithGoogle } from '../components/Auth';
 import { RouteComponentProps } from 'react-router';
 import { Favorite, Category } from '../lib/store/types';
 import EditFavoriteModal from '../components/EditFavoriteModal';
@@ -56,11 +51,9 @@ const CategoryPage: React.FC<CategoryProps> = ({ match }) => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <Suspense fallback={<LoadingSpinner />}>
-          <AuthCheck fallback={<LoggedOut />}>
-            <LoggedIn id={match.params.id} />
-          </AuthCheck>
-        </Suspense>
+        <AuthCheck fallback={<LoggedOut />}>
+          <LoggedIn id={match.params.id} />
+        </AuthCheck>
       </IonContent>
     </IonPage>
   );
@@ -70,27 +63,10 @@ const CategoryPage: React.FC<CategoryProps> = ({ match }) => {
 const LoggedIn: React.FC<{ id: string }> = ({ id }) => {
   // Set up the IonToast to alert user if favorite has been successfully deleted
   const [presentToast, dismissToast] = useIonToast();
-  // Grab the current user
-  const { data: user } = useUser();
+  // Grab the current user context
+  const { user, categories, favorites } = useContext();
   // State to track the current verse the user has selected to set as a Favorite
   const [favoriteVerse, setFavoriteVerse] = useState<Favorite | null>(null);
-
-  // Grab the current users categories
-  const userCategoriesRef = useFirestore()
-    .collection('users')
-    .doc(user?.uid)
-    .collection('categories');
-  const { data: categories } =
-    useFirestoreCollectionData<Category>(userCategoriesRef);
-
-  // Grab the current users favorites
-  const userFavoritesRef = useFirestore()
-    .collection('users')
-    .doc(user!.uid)
-    .collection('favorites')
-    .where('categoryId', '==', id);
-  const { data: favorites } =
-    useFirestoreCollectionData<Favorite>(userFavoritesRef);
 
   // Handler that runs when a user taps to close the Favorites Modal
   const handleEditFavoriteModalDismiss = () => {
@@ -130,7 +106,7 @@ const LoggedIn: React.FC<{ id: string }> = ({ id }) => {
 
   const onDeleteFavoriteClickHandler = async (favorite: Favorite) => {
     try {
-      await deleteFavorite(user.uid, favorite);
+      await deleteFavorite(user!.uid, favorite);
       presentToast({
         buttons: [{ text: 'close', handler: () => dismissToast() }],
         message: 'Favorite successfully deleted.',

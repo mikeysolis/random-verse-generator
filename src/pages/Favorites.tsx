@@ -3,7 +3,7 @@
  * scriptures.
  */
 
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 import {
   IonContent,
   IonPage,
@@ -30,9 +30,8 @@ import './Favorites.css';
 import AuthCheck from '../components/AuthCheck';
 import { useContext } from '../lib/user/context';
 import { addCategory, deleteCategory } from '../lib/firebase/db';
-import LoadingSpinner from '../components/LoadingSpinner';
 import { BasicCard } from '../components/Cards';
-import { SubscribeCheck, SignInWithGoogle } from '../components/Customers';
+import { SubscribeCheck, SignInWithGoogle } from '../components/Auth';
 import { Category } from '../lib/store/types';
 
 const Favs: React.FC = () => {
@@ -44,11 +43,9 @@ const Favs: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <Suspense fallback={<LoadingSpinner />}>
-          <AuthCheck fallback={<LoggedOut />}>
-            <LoggedIn />
-          </AuthCheck>
-        </Suspense>
+        <AuthCheck fallback={<LoggedOut />}>
+          <LoggedIn />
+        </AuthCheck>
       </IonContent>
     </IonPage>
   );
