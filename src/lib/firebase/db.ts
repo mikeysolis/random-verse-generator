@@ -1,5 +1,4 @@
-import firebase from 'firebase/app';
-import { firestore } from './config';
+import { firestore, increment } from './config';
 import { Category, Favorite } from '../store/types';
 
 export const deleteFavorite = (uid: string, favorite: Favorite) => {
@@ -24,7 +23,7 @@ export const deleteFavorite = (uid: string, favorite: Favorite) => {
     .collection('categories')
     .doc(favorite.categoryId);
   batch.update(categoryRef, {
-    count: firebase.firestore.FieldValue.increment(-1),
+    count: increment(-1),
   });
 
   return batch.commit();
@@ -53,7 +52,7 @@ export const addFavorite = (
     .collection('categories')
     .doc(favorite.categoryId);
   batch.update(categoryRef, {
-    count: firebase.firestore.FieldValue.increment(1),
+    count: increment(1),
   });
 
   return batch.commit();
@@ -95,7 +94,7 @@ export const updateFavorite = async (
       .collection('categories')
       .doc(favorite.categoryId);
     batch.update(newCategoryRef, {
-      count: firebase.firestore.FieldValue.increment(1),
+      count: increment(1),
     });
     // Decrement the old category by 1
     const oldCategoryRef = firestore
@@ -104,7 +103,7 @@ export const updateFavorite = async (
       .collection('categories')
       .doc(categoryId);
     batch.update(oldCategoryRef, {
-      count: firebase.firestore.FieldValue.increment(-1),
+      count: increment(-1),
     });
   }
 
@@ -164,7 +163,7 @@ export const deleteCategory = async (uid: string, id: string) => {
     });
 
     batch.update(uncategorizedRef, {
-      count: firebase.firestore.FieldValue.increment(favoritesSnapshop.size),
+      count: increment(favoritesSnapshop.size),
     });
   }
 

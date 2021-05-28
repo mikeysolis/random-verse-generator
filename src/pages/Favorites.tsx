@@ -171,13 +171,20 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
       <IonItem
         button={true}
         detail={true}
-        disabled={category.count! < 1}
+        disabled={category.count === undefined || category.count < 1}
         color="secondary"
         routerLink={`/favorites/${category.id}`}
       >
         <IonText className="ion-text-capitalize">{category.name}</IonText>
-        <IonBadge slot="end" color={category.count! < 1 ? 'light' : 'warning'}>
-          {category.count}
+        <IonBadge
+          slot="end"
+          color={
+            category.count === undefined || category.count < 1
+              ? 'light'
+              : 'warning'
+          }
+        >
+          {category.count ? category.count : 0}
         </IonBadge>
       </IonItem>
       {category.id !== 'uncategorized' && (

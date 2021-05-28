@@ -3,7 +3,6 @@
  */
 
 import { useStripe } from '@stripe/react-stripe-js';
-import { Suspense } from 'react';
 import {
   IonContent,
   IonPage,
@@ -12,12 +11,11 @@ import {
   IonTitle,
   IonButton,
 } from '@ionic/react';
-import { AuthCheck } from 'reactfire';
 
+import AuthCheck from '../components/AuthCheck';
 import { fetchFromAPI } from '../lib/utils/helpers';
 import { LoggedIn, LoggedOut } from '../pages/Dashboard';
 import { PrettyCard } from '../components/Cards';
-import LoadingSpinner from './LoadingSpinner';
 
 /**
  * Component: Checkout
@@ -85,11 +83,9 @@ export function CheckoutSuccess() {
           Thank you for joining our family! You now have access to the entire
           suite of Scripture Study Apps and all available features!
         </PrettyCard>
-        <Suspense fallback={<LoadingSpinner />}>
-          <AuthCheck fallback={<LoggedOut />}>
-            <LoggedIn />
-          </AuthCheck>
-        </Suspense>
+        <AuthCheck fallback={<LoggedOut />}>
+          <LoggedIn />
+        </AuthCheck>
       </IonContent>
     </IonPage>
   );
@@ -114,11 +110,9 @@ export function CheckoutFailed() {
           okay, we understand and are looking forward to you joining our family
           in the future!
         </PrettyCard>
-        <Suspense fallback={<LoadingSpinner />}>
-          <AuthCheck fallback={<LoggedOut />}>
-            <LoggedIn />
-          </AuthCheck>
-        </Suspense>
+        <AuthCheck fallback={<LoggedOut />}>
+          <LoggedIn />
+        </AuthCheck>
       </IonContent>
     </IonPage>
   );

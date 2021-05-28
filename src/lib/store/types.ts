@@ -6,17 +6,17 @@ export interface Verse {
 }
 
 export type Favorite = {
-  verseTitle?: string;
-  verseId?: number;
-  volumeTitle?: string;
-  scriptureText?: string;
+  verseTitle: string;
+  verseId: number;
+  volumeTitle: string;
+  scriptureText: string;
   note?: string;
   categoryId?: string;
 };
 
 export type Category = {
-  id?: string;
-  name?: string;
+  id: string;
+  name: string;
   count?: number;
 };
 

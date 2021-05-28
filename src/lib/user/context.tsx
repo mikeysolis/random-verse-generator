@@ -17,7 +17,11 @@ function useProviderValue() {
     if (user) {
       const ref = firestore.collection('users').doc(user.uid);
       unsubscribe = ref.onSnapshot(doc => {
-        setStatus(doc.data()?.status);
+        if (doc.exists) {
+          setStatus(doc.data()?.status);
+        } else {
+          setStatus(null);
+        }
       });
     } else {
       setStatus(null);

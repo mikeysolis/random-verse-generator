@@ -40,11 +40,7 @@ export const SignInWithGoogle: React.FC = () => {
     const batch = firestore.batch();
 
     const userRef = firestore.collection('users').doc(uid);
-    batch.set(
-      userRef,
-      { email, roles: ['user'], status: 'INACTIVE' },
-      { merge: true }
-    );
+    batch.set(userRef, { email }, { merge: true });
 
     const categoryRef = firestore
       .collection('users')
@@ -56,7 +52,6 @@ export const SignInWithGoogle: React.FC = () => {
       {
         id: 'uncategorized',
         name: 'uncategorized',
-        count: 0,
       },
       { merge: true }
     );
