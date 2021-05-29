@@ -1,3 +1,5 @@
+import firebase from 'firebase/app';
+
 export interface Verse {
   volumeTitle: string;
   verseTitle: string;
@@ -19,6 +21,8 @@ export type Category = {
   name: string;
   count?: number;
 };
+
+export type User = firebase.User | null | undefined;
 
 export interface FirebaseError {
   errorMessage: string;

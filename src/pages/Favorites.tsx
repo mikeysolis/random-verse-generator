@@ -57,7 +57,6 @@ const LoggedIn: React.FC = () => {
   const [presentToast, dismissToast] = useIonToast();
   // Setup state for the add category input
   const [inputValue, setInputValue] = useState<string>('');
-
   // Grab the current user
   const { user, categories } = useContext();
 

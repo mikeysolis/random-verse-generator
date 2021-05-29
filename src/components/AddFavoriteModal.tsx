@@ -4,7 +4,7 @@
  * when the user presses the Favorites button on a verse
  */
 
-import React, { Dispatch, SetStateAction, useState, Suspense } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import {
   IonButton,
   IonButtons,
@@ -14,7 +14,6 @@ import {
   IonContent,
   IonHeader,
   IonIcon,
-  IonModal,
   IonSelect,
   IonSelectOption,
   IonText,
@@ -24,11 +23,10 @@ import {
   useIonToast,
 } from '@ionic/react';
 import { close } from 'ionicons/icons';
-import { useUser, useFirestore, useFirestoreCollectionData } from 'reactfire';
 
 import './AddFavoriteModal.css';
 import { addFavorite } from '../lib/firebase/db';
-import { Verse, Favorite, Category } from '../lib/store/types';
+import { Verse, Favorite, Category, User } from '../lib/store/types';
 
 /**
  * Main display component, recieves neccessary props for the modal to function.
@@ -36,18 +34,20 @@ import { Verse, Favorite, Category } from '../lib/store/types';
  * dismissing the modal and the second to add the verse to firebase.
  */
 interface FavoriteModalProps {
-  verse: Verse;
-  isOpen: boolean;
+  user: User;
+  favorite: Favorite;
+  categories: Category[];
   onDismiss: Dispatch<SetStateAction<boolean>>;
 }
 
 const FavoriteModal: React.FC<FavoriteModalProps> = ({
-  verse,
-  isOpen,
+  user,
+  favorite,
+  categories,
   onDismiss,
 }) => {
   return (
-    <IonModal isOpen={isOpen} cssClass="add-favorite-modal">
+    <>
       <IonHeader>
         <IonToolbar color="primary">
           <IonTitle>Add Favorite</IonTitle>
@@ -59,30 +59,35 @@ const FavoriteModal: React.FC<FavoriteModalProps> = ({
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <Suspense fallback={<LoggedOut />}>
-          <LoggedIn verse={verse} onDismiss={onDismiss} />
-        </Suspense>
+        {user ? (
+          <LoggedIn
+            verse={favorite}
+            user={user}
+            categories={categories}
+            onDismiss={onDismiss}
+          />
+        ) : (
+          <LoggedOut />
+        )}
       </IonContent>
-    </IonModal>
+    </>
   );
 };
 
 // Content to display if the user is logged in
 interface LoggedInProps {
   verse: Verse;
+  user: User;
+  categories: Category[];
   onDismiss: Dispatch<SetStateAction<boolean>>;
 }
 
-const LoggedIn: React.FC<LoggedInProps> = ({ verse, onDismiss }) => {
-  // Grab the current user
-  const { data: user } = useUser();
-  // Grab the current users categories
-  const userCategoriesRef = useFirestore()
-    .collection('users')
-    .doc(user?.uid)
-    .collection('categories');
-  const { data: categories } =
-    useFirestoreCollectionData<Category>(userCategoriesRef);
+const LoggedIn: React.FC<LoggedInProps> = ({
+  verse,
+  user,
+  categories,
+  onDismiss,
+}) => {
   // Set up the IonToast to alert user if favorite has been successfully added
   const [presentToast, dismissToast] = useIonToast();
   // Setup the state for handling the Note textfield
@@ -105,7 +110,7 @@ const LoggedIn: React.FC<LoggedInProps> = ({ verse, onDismiss }) => {
 
     // Add verse to firebase
     try {
-      await addFavorite(user.uid, verse.verseTitle, favorite);
+      await addFavorite(user!.uid, verse.verseTitle, favorite);
       presentToast({
         buttons: [{ text: 'close', handler: () => dismissToast() }],
         message: 'Favorite successfully added.',
@@ -116,7 +121,7 @@ const LoggedIn: React.FC<LoggedInProps> = ({ verse, onDismiss }) => {
       console.log(error);
     }
 
-    onDismiss(true);
+    onDismiss(false);
   };
 
   return (

@@ -3,7 +3,7 @@
  * scriptures.
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   IonContent,
   IonPage,
@@ -24,10 +24,9 @@ import { BasicCard } from '../components/Cards';
 import FavoriteCard from '../components/FavoriteCard';
 import { SubscribeCheck, SignInWithGoogle } from '../components/Auth';
 import { RouteComponentProps } from 'react-router';
-import { Favorite, Category } from '../lib/store/types';
+import { Favorite } from '../lib/store/types';
 import EditFavoriteModal from '../components/EditFavoriteModal';
 import ViewFavoriteModal from '../components/ViewFavoriteModal';
-import AlertPopup from '../components/AlertPopup';
 import { deleteFavorite } from '../lib/firebase/db';
 
 interface CategoryProps
@@ -65,8 +64,14 @@ const LoggedIn: React.FC<{ id: string }> = ({ id }) => {
   const [presentToast, dismissToast] = useIonToast();
   // Grab the current user context
   const { user, categories, favorites } = useContext();
+  const [filteredFavorites, setFilteredFavorites] = useState<Favorite[]>();
   // State to track the current verse the user has selected to set as a Favorite
   const [favoriteVerse, setFavoriteVerse] = useState<Favorite | null>(null);
+
+  useEffect(() => {
+    const filteredFavorites = favorites.filter(fav => fav.categoryId === id);
+    setFilteredFavorites(filteredFavorites);
+  }, [setFilteredFavorites, favorites, id]);
 
   // Handler that runs when a user taps to close the Favorites Modal
   const handleEditFavoriteModalDismiss = () => {
@@ -125,13 +130,14 @@ const LoggedIn: React.FC<{ id: string }> = ({ id }) => {
 
   return (
     <SubscribeCheck fallback={<UnSubscribed />}>
-      {favorites.length === 0 ? (
+      {filteredFavorites && filteredFavorites.length === 0 ? (
         <BasicCard title="No Favorites Found">
           Once you add or update a Favorite's category to '{id}', it will show
           up here.
         </BasicCard>
       ) : (
-        favorites.map((favorite, i) => (
+        filteredFavorites &&
+        filteredFavorites.map((favorite, i) => (
           <FavoriteCard
             key={`${i}-${favorite.verseId}`}
             favorite={favorite}

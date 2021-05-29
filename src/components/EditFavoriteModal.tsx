@@ -23,11 +23,10 @@ import {
   useIonToast,
 } from '@ionic/react';
 import { close } from 'ionicons/icons';
-import firebase from 'firebase/app';
 import { updateFavorite } from '../lib/firebase/db';
 
 import './EditFavoriteModal.css';
-import { Favorite, Category } from '../lib/store/types';
+import { Favorite, Category, User } from '../lib/store/types';
 
 /**
  * Main display component, recieves neccessary props for the modal to function.
@@ -35,7 +34,7 @@ import { Favorite, Category } from '../lib/store/types';
  * dismissing the modal and the second to add the verse to firebase.
  */
 interface EditFavoriteModalProps {
-  user: firebase.User;
+  user: User;
   favorite: Favorite;
   categories: Category[];
   onDismiss: () => void;
@@ -107,7 +106,7 @@ const LoggedIn: React.FC<EditFavoriteModalProps> = ({
 
     // Add verse to firebase
     try {
-      await updateFavorite(user.uid, favorite.verseTitle!, newFavorite);
+      await updateFavorite(user!.uid, favorite.verseTitle!, newFavorite);
       presentToast({
         buttons: [{ text: 'close', handler: () => dismissToast() }],
         message: 'Favorite successfully updated.',
