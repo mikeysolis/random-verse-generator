@@ -2,7 +2,7 @@ import React from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { auth, firestore } from '../firebase/config';
-import { Category, Favorite } from '../store/types';
+import { Category, Favorite } from '../types';
 
 function useProviderValue() {
   const [user] = useAuthState(auth);
@@ -104,7 +104,7 @@ export const ContextProvider: React.FC = props => {
   return <Context.Provider value={value} {...props} />;
 };
 
-export function useContext() {
+export function useUserContext() {
   const context = React.useContext(Context);
 
   if (context === undefined) {

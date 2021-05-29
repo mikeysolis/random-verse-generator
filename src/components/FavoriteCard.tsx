@@ -16,7 +16,7 @@ import {
 import { eye, pencil, trash } from 'ionicons/icons';
 
 import './VerseCard.css';
-import { Favorite } from '../lib/store/types';
+import { Favorite } from '../lib/types';
 import AlertPopup from '../components/AlertPopup';
 
 /**

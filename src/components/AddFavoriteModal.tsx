@@ -26,7 +26,7 @@ import { close } from 'ionicons/icons';
 
 import './AddFavoriteModal.css';
 import { addFavorite } from '../lib/firebase/db';
-import { Verse, Favorite, Category, User } from '../lib/store/types';
+import { Verse, Favorite, Category, User } from '../lib/types';
 
 /**
  * Main display component, recieves neccessary props for the modal to function.

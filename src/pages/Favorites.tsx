@@ -28,11 +28,11 @@ import { trash, add } from 'ionicons/icons';
 
 import './Favorites.css';
 import AuthCheck from '../components/AuthCheck';
-import { useContext } from '../lib/user/context';
+import { useUserContext } from '../lib/user/context';
 import { addCategory, deleteCategory } from '../lib/firebase/db';
 import { BasicCard } from '../components/Cards';
 import { SubscribeCheck, SignInWithGoogle } from '../components/Auth';
-import { Category } from '../lib/store/types';
+import { Category } from '../lib/types';
 
 const Favs: React.FC = () => {
   return (
@@ -58,7 +58,7 @@ const LoggedIn: React.FC = () => {
   // Setup state for the add category input
   const [inputValue, setInputValue] = useState<string>('');
   // Grab the current user
-  const { user, categories } = useContext();
+  const { user, categories } = useUserContext();
 
   const categoryDeleteHandler = async (category: Category) => {
     await deleteCategory(user!.uid, category.id!);

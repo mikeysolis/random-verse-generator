@@ -18,13 +18,13 @@ import {
 } from '@ionic/react';
 
 import './Category.css';
-import { useContext } from '../lib/user/context';
+import { useUserContext } from '../lib/user/context';
 import AuthCheck from '../components/AuthCheck';
 import { BasicCard } from '../components/Cards';
 import FavoriteCard from '../components/FavoriteCard';
 import { SubscribeCheck, SignInWithGoogle } from '../components/Auth';
 import { RouteComponentProps } from 'react-router';
-import { Favorite } from '../lib/store/types';
+import { Favorite } from '../lib/types';
 import EditFavoriteModal from '../components/EditFavoriteModal';
 import ViewFavoriteModal from '../components/ViewFavoriteModal';
 import { deleteFavorite } from '../lib/firebase/db';
@@ -63,7 +63,7 @@ const LoggedIn: React.FC<{ id: string }> = ({ id }) => {
   // Set up the IonToast to alert user if favorite has been successfully deleted
   const [presentToast, dismissToast] = useIonToast();
   // Grab the current user context
-  const { user, categories, favorites } = useContext();
+  const { user, categories, favorites } = useUserContext();
   const [filteredFavorites, setFilteredFavorites] = useState<Favorite[]>();
   // State to track the current verse the user has selected to set as a Favorite
   const [favoriteVerse, setFavoriteVerse] = useState<Favorite | null>(null);

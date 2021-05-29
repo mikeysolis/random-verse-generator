@@ -15,7 +15,7 @@ import {
 import { bookmark, trash, heart } from 'ionicons/icons';
 
 import './VerseCard.css';
-import { Verse } from '../lib/store/types';
+import { Verse } from '../lib/types';
 
 /**
  * The VerseCard takes multiple props:

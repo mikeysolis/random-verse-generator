@@ -26,7 +26,7 @@ import { close } from 'ionicons/icons';
 import { updateFavorite } from '../lib/firebase/db';
 
 import './EditFavoriteModal.css';
-import { Favorite, Category, User } from '../lib/store/types';
+import { Favorite, Category, User } from '../lib/types';
 
 /**
  * Main display component, recieves neccessary props for the modal to function.

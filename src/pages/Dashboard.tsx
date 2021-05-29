@@ -13,7 +13,7 @@ import {
 } from '@ionic/react';
 
 import AuthCheck from '../components/AuthCheck';
-import { useContext } from '../lib/user/context';
+import { useUserContext } from '../lib/user/context';
 import Checkout from '../components/Checkout';
 import { SignInWithGoogle, SignOut } from '../components/Auth';
 import Portal from '../components/Portal';
@@ -39,7 +39,7 @@ const Account: React.FC = () => {
 
 // Show to the user if they are logged in
 export const LoggedIn: React.FC = () => {
-  const { status } = useContext();
+  const { status } = useUserContext();
   return (
     <>
       {status === 'ACTIVE' || status === 'PAST_DUE' ? (

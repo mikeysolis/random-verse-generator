@@ -15,13 +15,13 @@ import {
   useIonModal,
 } from '@ionic/react';
 
-import { useContext } from '../lib/user/context';
+import { useUserContext } from '../lib/user/context';
 import AddFavoriteModal from '../components/AddFavoriteModal';
 import { useAppSelector, useAppDispatch } from '../lib/store/hooks';
 import { clear, concatVerses } from '../lib/store/versesSlice';
 import { updateBookmarks } from '../lib/store/bookmarksSlice';
 import { isBookmarked } from '../lib/utils/helpers';
-import { Verse } from '../lib/store/types';
+import { Verse } from '../lib/types';
 import SkeletonCards from '../components/SkeletonCards';
 import { BasicCard } from '../components/Cards';
 import VerseCard from '../components/VerseCard';
@@ -32,7 +32,7 @@ const Home: React.FC = () => {
   // Grab the apps dispatch method for handling state
   const dispatch = useAppDispatch();
   // Grab the current context
-  const { user, categories } = useContext();
+  const { user, categories } = useUserContext();
   // Grab the current verses and bookmarks state from redux
   const { verses, bookmarks } = useAppSelector(state => state);
   // Track the current VolumeID for the row of buttons at the top of the display

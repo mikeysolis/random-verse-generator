@@ -19,7 +19,7 @@ import {
 import { close } from 'ionicons/icons';
 
 import './ViewFavoriteModal.css';
-import { Favorite } from '../lib/store/types';
+import { Favorite } from '../lib/types';
 
 /**
  * Main display component, recieves neccessary props for the modal to function.

@@ -1,7 +1,7 @@
 import { auth } from '../firebase/config';
 import { STRIPE_API } from '../config';
 
-import { Verse } from '../store/types';
+import { Verse } from '../types';
 
 /**
  * Determine if a verse card is currently bookmarked,

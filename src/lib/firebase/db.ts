@@ -1,5 +1,5 @@
 import { firestore, increment } from './config';
-import { Category, Favorite } from '../store/types';
+import { Category, Favorite } from '../types';
 
 export const deleteFavorite = (uid: string, favorite: Favorite) => {
   // Deleting requires two steps, first delete the favorite, then decrement

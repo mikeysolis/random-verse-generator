@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 import { RootState } from './store';
-import { Verse } from './types';
+import { Verse } from '../types';
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 import { GET_RANDOM_VERSES_FROM_VOLUME } from '../../lib/apollo/queries';
 

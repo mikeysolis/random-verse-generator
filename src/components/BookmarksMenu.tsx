@@ -19,7 +19,7 @@ import { bookmark } from 'ionicons/icons';
 import './BookmarksMenu.css';
 import { useAppDispatch } from '../lib/store/hooks';
 import { updateBookmarks } from '../lib/store/bookmarksSlice';
-import { Verse } from '../lib/store/types';
+import { Verse } from '../lib/types';
 import VerseCard from '../components/VerseCard';
 
 interface BookmarksMenuProps {

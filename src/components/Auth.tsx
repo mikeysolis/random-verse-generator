@@ -8,7 +8,7 @@
 import { IonButton } from '@ionic/react';
 
 import './Auth.css';
-import { useContext } from '../lib/user/context';
+import { useUserContext } from '../lib/user/context';
 import { auth, firestore, googleAuthProvider } from '../lib/firebase/config';
 
 // Component to verify if the logged in user has an ACTIVE subscription.
@@ -22,7 +22,7 @@ export const SubscribeCheck: React.FC<SubscribeCheckProps> = ({
   children,
 }) => {
   // Grab the current user
-  const { status } = useContext();
+  const { status } = useUserContext();
 
   // If the user status is ACTIVE or PAST_DUE allow access, else not.
   return (
