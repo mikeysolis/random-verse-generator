@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "scripture-study-apps-dev"
+    "default": "scripture-study-apps-dev",
+    "staging": "scripture-study-apps-staging",
+    "development": "scripture-study-apps-dev"
   }
 }
